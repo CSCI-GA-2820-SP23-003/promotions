@@ -1,18 +1,18 @@
 """
-Test cases for YourResourceModel Model
+Test cases for Promotion Model
 
 """
 import os
 import logging
 import unittest
-from service.models import YourResourceModel, DataValidationError, db
+from service.models import Promotion, DataValidationError, db
 
 
 ######################################################################
-#  YourResourceModel   M O D E L   T E S T   C A S E S
+#  Promotion   M O D E L   T E S T   C A S E S
 ######################################################################
-class TestYourResourceModel(unittest.TestCase):
-    """ Test Cases for YourResourceModel Model """
+class TestPromotion(unittest.TestCase):
+    """ Test Cases for Promotion Model """
 
     @classmethod
     def setUpClass(cls):
