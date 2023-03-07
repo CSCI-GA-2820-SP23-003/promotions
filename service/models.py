@@ -98,7 +98,7 @@ class Promotion(db.Model):
             "id": self.id, 
             "title": self.title,
             "promo_code": self.promo_code,
-            "promo_type": self.promo_type,
+            "promo_type": self.promo_type.name,
             "amount": self.amount,
             "start_date": self.start_date.isoformat(),
             "end_date": self.end_date.isoformat(),
