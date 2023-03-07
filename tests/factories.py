@@ -2,6 +2,7 @@
 Test Factory to make fake objects for testing
 """
 from datetime import date
+import string
 
 import factory
 from factory.fuzzy import FuzzyChoice, FuzzyDate, FuzzyText, FuzzyInteger
@@ -17,8 +18,8 @@ class PromotionsFactory(factory.Factory):
         model = Promotion
 
     id = factory.Sequence(lambda n: n)
-    title = factory.FuzzyText(length=12, chars=string.ascii_letters, prefix='promo_')
-    promo_code = factory.FuzzyText(length=5, chars=string.ascii_letters, prefix='')
+    title = FuzzyText(length=12, chars=string.ascii_letters, prefix='promo_')
+    promo_code = FuzzyText(length=5, chars=string.ascii_letters, prefix='')
     promo_type = FuzzyChoice(choices=[PromoType.BOGO, PromoType.DISCOUNT, PromoType.FIXED])
     amount = FuzzyInteger(10, 100)
     start_date = FuzzyDate(date(2023, 1, 1), date(2023, 12, 31))
