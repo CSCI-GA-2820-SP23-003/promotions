@@ -42,7 +42,7 @@ def index():
 ######################################################################
 # ADD A NEW Promotion
 ######################################################################
-@app.route("/promotion", methods=["POST"])
+@app.route("/promotions", methods=["POST"])
 def create_promotion():
     """
     Creates a Promotion
@@ -79,3 +79,40 @@ def check_content_type(content_type):
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         f"Content-Type must be {content_type}",
     )
+######################################################################
+# GET ALL PROMOTIONs
+######################################################################
+@app.route("/promotions", methods=["GET"])
+def get_promotions(self):
+    """
+    get all Promotions
+
+    This endpoint will return a list of Promotions with db
+    """
+    app.logger.info("Request to list promotions")
+    all_promotions = []
+    all_promotions = Promotion.all()
+    results = [promo.serialize() for promo in all_promotions]
+    app.logger.info("Returning %d promotions", len(results))
+    return results, status.HTTP_200_OK
+
+
+######################################################################
+# DELETE A PROMOTION
+######################################################################
+@app.route("/promotions/<int:promotion_id>", methods=["DELETE"])
+def delete_promotions(promotion_id):
+    """
+    Delete a Promotion
+
+    This endpoint will delete a Promotion based the id specified in the path
+    """
+    app.logger.info("Request to delete promotion with id: %s", promotion_id)
+    promotion = Promotion.find(promotion_id)
+    if promotion:
+        promotion.delete()
+
+    app.logger.info("Promotion with ID [%s] delete complete.", promotion_id)
+    return "", status.HTTP_204_NO_CONTENT
+
+

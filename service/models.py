@@ -73,8 +73,8 @@ class Promotion(db.Model):
         """
         Creates a Promotion to the database
         """
-        logger.info("Creating promotion %s", self.name)
-        self.id = None  # pylint: disable=invalid-name
+        logger.info("Creating promotion %s", self.title)
+        self.id = None  # pylint: disable=invalid-title
         db.session.add(self)
         db.session.commit()
 
@@ -82,12 +82,12 @@ class Promotion(db.Model):
         """
         Updates a Promotion to the database
         """
-        logger.info("Saving %s", self.name)
+        logger.info("Saving %s", self.title)
         db.session.commit()
 
     def delete(self):
         """ Removes a Promotion from the data store """
-        logger.info("Deleting promotion %s", self.name)
+        logger.info("Deleting promotion %s", self.title)
         db.session.delete(self)
         db.session.commit()
 
@@ -98,7 +98,7 @@ class Promotion(db.Model):
             "id": self.id, 
             "title": self.title,
             "promo_code": self.promo_code,
-            "promo_type": self.promo_type,
+            "promo_type": self.promo_type.name,
             "amount": self.amount,
             "start_date": self.start_date.isoformat(),
             "end_date": self.end_date.isoformat(),
@@ -167,5 +167,5 @@ class Promotion(db.Model):
         Args:
             promotion_id (int): the id of the Promotions 
         """
-        logger.info("Processing name query for %s ...", promotion_id)
+        logger.info("Processing title query for %s ...", promotion_id)
         return cls.query.filter(cls.id == promotion_id)
