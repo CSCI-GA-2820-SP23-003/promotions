@@ -29,6 +29,24 @@ def index():
 ######################################################################
 
 ######################################################################
+# GET ALL PROMOTIONs
+######################################################################
+@app.route("/promotions", methods=["GET"])
+def get_promotions(self):
+    """
+    get all Promotions
+
+    This endpoint will return a list of Promotions with db
+    """
+    app.logger.info("Request to list promotions")
+    all_promotions = []
+    all_promotions = Promotion.all()
+    results = [promo.serialize() for promo in all_promotions]
+    app.logger.info("Returning %d promotions", len(results))
+    return results, status.HTTP_200_OK
+
+
+######################################################################
 # DELETE A PROMOTION
 ######################################################################
 @app.route("/promotions/<int:promotion_id>", methods=["DELETE"])
