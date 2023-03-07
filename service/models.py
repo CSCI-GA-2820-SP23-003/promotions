@@ -82,6 +82,8 @@ class Promotion(db.Model):
         """
         Updates a Promotion to the database
         """
+        if not self.id:
+            raise DataValidationError(f"Promo id not provided.")
         logger.info("Saving %s", self.title)
         db.session.commit()
 

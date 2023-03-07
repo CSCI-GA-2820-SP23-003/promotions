@@ -2,6 +2,7 @@
 Test cases for Promotion Model
 
 """
+from datetime import date
 import os
 import logging
 import unittest
@@ -56,3 +57,20 @@ class TestPromotion(unittest.TestCase):
         promotion.delete()
         self.assertEqual(len(Promotion.all()), 0)
 
+    def test_update_no_id_should_raise_error(self):
+        promo = PromotionsFactory()
+        promo.id = None
+        self.assertRaises(DataValidationError, promo.update)
+
+    def test_update_a_promotion_happy_path(self):
+        promo = PromotionsFactory()
+        promo.create()
+        promo_id = promo.id
+
+        promo.amount = 9999
+        promo.start_date = date(2000, 1, 1)
+        promo.update()
+
+        updated = Promotion.find(promo_id)
+        self.assertEqual(updated.amount, promo.amount)
+        self.assertEqual(updated.start_date, promo.start_date)
