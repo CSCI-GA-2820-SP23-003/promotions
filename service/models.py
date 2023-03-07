@@ -67,7 +67,7 @@ class Promotion(db.Model):
     product_id = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        return f"<Promotion {self.name} id=[{self.id}]>"
+        return f"<Promotion {self.title} id=[{self.id}]>"
 
     def create(self):
         """
