@@ -59,7 +59,7 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(len(Promotion.all()), 0)
 
     def test_update_no_id_should_raise_error(self):
-        promo = PromotionsFactory()
+        promotion = PromotionsFactory()
         promo.id = None
         self.assertRaises(DataValidationError, promo.update)
 
