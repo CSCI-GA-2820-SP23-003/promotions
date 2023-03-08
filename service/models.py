@@ -10,14 +10,14 @@ Promotion - A representation of a special promotion/sale that is running against
 Attributes:
 -----------
 id (int) = id of the promotion
-title (String)= title of the promotion 
-promo_code (String) = code of promotion (6 characters) 
+title (String)= title of the promotion
+promo_code (String) = code of promotion (6 characters)
 promo_type (Enum(PromoType))= type of the promotion
 amount (int) = amount of discount
-start_date (timestamp)= start date of promotion 
-end_date (timestamp)= end date of promotion 
-is_site_wide (bool)= status whether promotion is site-wide 
-product_id (int) = id of the product 
+start_date (timestamp)= start date of promotion
+end_date (timestamp)= end date of promotion
+is_site_wide (bool)= status whether promotion is site-wide
+product_id (int) = id of the product
 """
 
 import logging
@@ -42,16 +42,19 @@ def init_db(app):
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
 
+
 class PromoType(Enum):
     """ Enumeration of valid promotion types"""
-    BOGO = 1		# buy X get 1 free
-    DISCOUNT = 2	# X% off
-    FIXED = 3		# $X off
+    BOGO = 1		    # buy X get 1 free
+    DISCOUNT = 2	    # X% off
+    FIXED = 3		    # $X off
+
 
 class Promotion(db.Model):
     """
     Class that represents a Promotion
     """
+    # pylint: disable=too-many-instance-attributes
 
     app = None
 
@@ -74,7 +77,7 @@ class Promotion(db.Model):
         Creates a Promotion to the database
         """
         logger.info("Creating promotion %s", self.title)
-        self.id = None  # pylint: disable=invalid-title
+        self.id = None  # pylint: disable=invalid-name
         db.session.add(self)
         db.session.commit()
 
@@ -83,7 +86,7 @@ class Promotion(db.Model):
         Updates a Promotion to the database
         """
         if not self.id:
-            raise DataValidationError(f"Promo id not provided.")
+            raise DataValidationError("Promo id not provided.")
         logger.info("Saving %s", self.title)
         db.session.commit()
 
@@ -97,7 +100,7 @@ class Promotion(db.Model):
         """ Serializes a Promotion into a dictionary """
 
         return {
-            "id": self.id, 
+            "id": self.id,
             "title": self.title,
             "promo_code": self.promo_code,
             "promo_type": self.promo_type.name,
@@ -154,11 +157,11 @@ class Promotion(db.Model):
 
     @classmethod
     def find(cls, promotion_id: int):
-        """ Finds a Promotion by it's ID 
+        """ Finds a Promotion by it's ID
 
         Args:
             promotion_id (int): the id of the Promotions
-        
+
         """
         logger.info("Processing lookup for promotion id %s ...", promotion_id)
         return cls.query.get(promotion_id)
@@ -168,7 +171,7 @@ class Promotion(db.Model):
         """Find a Promotion by it's id
 
         Args:
-            promotion_id (int): the id of the Promotions 
+            promotion_id (int): the id of the Promotions
         """
         logger.info("Processing title query for %s ...", promotion_id)
         return cls.query.filter(cls.id == promotion_id)

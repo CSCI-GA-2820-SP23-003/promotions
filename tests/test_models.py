@@ -6,7 +6,6 @@ from datetime import date
 import os
 import logging
 import unittest
-from datetime import date
 from service.models import Promotion, DataValidationError, db
 from service import app
 from tests.factories import PromotionsFactory
@@ -59,25 +58,27 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(len(Promotion.all()), 0)
 
     def test_update_no_id_should_raise_error(self):
+        """It should raise an error if no id is there for a Promotion update"""
         promotion = PromotionsFactory()
-        promo.id = None
-        self.assertRaises(DataValidationError, promo.update)
+        promotion.id = None
+        self.assertRaises(DataValidationError, promotion.update)
 
     def test_update_a_promotion_happy_path(self):
-        promo = PromotionsFactory()
-        promo.create()
-        promo_id = promo.id
+        """It should update a Promotion"""
+        promotion = PromotionsFactory()
+        promotion.create()
+        promo_id = promotion.id
 
-        promo.amount = 9999
-        promo.start_date = date(2000, 1, 1)
-        promo.update()
+        promotion.amount = 9999
+        promotion.start_date = date(2000, 1, 1)
+        promotion.update()
 
         updated = Promotion.find(promo_id)
-        self.assertEqual(updated.amount, promo.amount)
-        self.assertEqual(updated.start_date, promo.start_date)
+        self.assertEqual(updated.amount, promotion.amount)
+        self.assertEqual(updated.start_date, promotion.start_date)
 
-    def test_serialize_an_order(self):
-        """It should serialize an Order"""
+    def test_serialize_a_promotion(self):
+        """It should serialize a Promotion"""
         promotion = PromotionsFactory()
         data = promotion.serialize()
         self.assertNotEqual(data, None)
@@ -98,8 +99,8 @@ class TestPromotion(unittest.TestCase):
         self.assertIn('product_id', data)
         self.assertEqual(data['product_id'], promotion.product_id)
 
-    def test_deserialize_an_order(self):
-        """It should de-serialize an Order"""
+    def test_deserialize_a_promotion(self):
+        """It should de-serialize a Promotion"""
         data = PromotionsFactory().serialize()
         promotion = Promotion()
         promotion.deserialize(data)
