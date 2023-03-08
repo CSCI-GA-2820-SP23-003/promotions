@@ -118,6 +118,7 @@ class Promotion(db.Model):
             self.title = data["title"]
             self.promo_code = data["promo_code"]
             self.promo_type = data["promo_type"]
+            self.amount = data["amount"]
             self.start_date = date.fromisoformat(data["start_date"])
             self.end_date = date.fromisoformat(data["end_date"])
             self.is_site_wide = data["is_site_wide"]
