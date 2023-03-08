@@ -5,15 +5,14 @@ Test cases can be run with the following:
   nosetests -v --with-spec --spec-color
   coverage report -m
 """
+from datetime import date
 import os
 import logging
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
 from service import app
-from service.models import db
 from service.common import status  # HTTP Status Codes
 from service.models import Promotion, db, init_db
-from tests.factories import PromotionsFactory
+from tests.factories import PromotionsFactory  # HTTP Status Codes
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -81,13 +80,26 @@ class TestPromotionServer(TestCase):
         test_promo1 = self._create_promotions(1)[0]
 
         # if it gets 200 status, then pass
-        resp = self.app.get("/promotions")
+        resp = self.app.get(f"{BASE_URL}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         # check id of test_promos match to the returned JSON
         data = resp.get_json()
         self.assertEqual(data[0]['id'], test_promo0.id)
         self.assertEqual(data[1]['id'], test_promo1.id)
+
+    def test_get_a_promotion(self):
+        """ Get a Promotion """
+        # get the id of a promotion
+        test_promo = self._create_promotions(1)[0]
+        
+        # if it gets 200 status, then pass
+        resp = self.app.get(f"{BASE_URL}/{test_promo.id}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        # check id of test_promo match to the returned JSON
+        data = resp.get_json()
+        self.assertEqual(data[0]['id'], test_promo.id)
 
     def test_delete_promotion(self):
         """It should Delete a Promotion"""
@@ -99,8 +111,29 @@ class TestPromotionServer(TestCase):
         response = self.app.get(f"{BASE_URL}/{test_promotion.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_update_promotion_happy_path(self):
+        """It should update a promotion with provided data if the promotion exists"""
+        test_promotion = self._create_promotions(1)[0]
+
+        test_promotion.start_date = date(1999,1,1)
+        test_promotion.amount = 9999
+        updated_promotion = self.app.put(f"{BASE_URL}/update/{test_promotion.id}", json=test_promotion.serialize())
+
+        self.assertEqual(updated_promotion.status_code, status.HTTP_200_OK)
+        self.assertEqual(updated_promotion.amount, test_promotion.amount)
+        self.assertEqual(updated_promotion.start_date, test_promotion.start_date)
+
+
     ######################################################################
     #  T E S T   S A D   P A T H S
     ######################################################################
 
     
+    def test_update_promotion_not_found(self):
+        """It should not update a promotion if the promotion does not exist"""
+        promotion_id_not_found = 987654321
+        promotion = PromotionsFactory()
+        promotion.id = promotion_id_not_found
+        response = self.app.put(f"{BASE_URL}/update/{promotion_id_not_found}", json=promotion.serialize())
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        

@@ -82,6 +82,8 @@ class Promotion(db.Model):
         """
         Updates a Promotion to the database
         """
+        if not self.id:
+            raise DataValidationError(f"Promo id not provided.")
         logger.info("Saving %s", self.title)
         db.session.commit()
 
@@ -114,14 +116,15 @@ class Promotion(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.id = data["id"]
             self.title = data["title"]
             self.promo_code = data["promo_code"]
             self.promo_type = data["promo_type"]
+            self.amount = data["amount"]
             self.start_date = date.fromisoformat(data["start_date"])
             self.end_date = date.fromisoformat(data["end_date"])
             self.is_site_wide = data["is_site_wide"]
             self.product_id = data["product_id"]
+            self.amount = data["amount"]
         except KeyError as error:
             raise DataValidationError(
                 "Invalid Promotion: missing " + error.args[0]
