@@ -41,18 +41,18 @@ def create_promotion():
     Creates a Promotion
     This endpoint will create a Promotion based the data in the body that is posted
     """
-    
+
     app.logger.info("Request to create a promotion")
     check_content_type("application/json")
-    
+
     promotion = Promotion()
     promotion.deserialize(request.get_json())
     promotion.create()
     message = promotion.serialize()
-    
 
     app.logger.info("Promotion with ID [%s] created.", promotion.id)
     return jsonify(message), status.HTTP_201_CREATED
+
 
 def check_content_type(content_type):
     """Checks that the media type is correct"""
@@ -65,13 +65,11 @@ def check_content_type(content_type):
 
     if request.headers["Content-Type"] == content_type:
         return
-
     app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
     abort(
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         f"Content-Type must be {content_type}",
     )
-
 
 
 @app.route("/promotions", methods=["GET"])
@@ -91,6 +89,8 @@ def get_promotions():
 ######################################################################
 # GET A PROMOTION
 ######################################################################
+
+
 @app.route("/promotions/<int:promotion_id>", methods=["GET"])
 def get_a_promotion(promotion_id):
     """
@@ -107,6 +107,8 @@ def get_a_promotion(promotion_id):
 ######################################################################
 # DELETE A PROMOTION
 ######################################################################
+
+
 @app.route("/promotions/<int:promotion_id>", methods=["DELETE"])
 def delete_promotions(promotion_id):
     """
@@ -126,17 +128,18 @@ def delete_promotions(promotion_id):
 ######################################################################
 # UPDATE A PROMOTION
 ######################################################################
+
+
 @app.route("/promotions/<int:promo_id>", methods=["PUT"])
 def update_promotion(promo_id):
     """
     Updates a promotion with details provided
-    
+
     This endpoint will update a promotion with provided details
     and return the updated information when successful.
     If the provided promotion id is not found, it will return 404
     """
     app.logger.info("Request to update promotion, id: %s", promo_id)
-
     promotion = Promotion.find(promo_id)
     if not promotion:
         abort(status.HTTP_404_NOT_FOUND, f"Promotion {promo_id} not found.")
@@ -144,6 +147,5 @@ def update_promotion(promo_id):
     data = request.get_json()
     promotion.deserialize(data)
     promotion.update()
-
     app.logger.info("Promotion %s updated.", promotion.id)
     return jsonify(promotion.serialize()), status.HTTP_200_OK
