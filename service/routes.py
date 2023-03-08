@@ -35,7 +35,7 @@ def index():
 # GET ALL PROMOTIONs
 ######################################################################
 @app.route("/promotions", methods=["GET"])
-def get_promotions(self):
+def get_promotions():
     """
     get all Promotions
 

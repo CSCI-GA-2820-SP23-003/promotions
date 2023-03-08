@@ -124,6 +124,7 @@ class Promotion(db.Model):
             self.end_date = date.fromisoformat(data["end_date"])
             self.is_site_wide = data["is_site_wide"]
             self.product_id = data["product_id"]
+            self.amount = data["amount"]
         except KeyError as error:
             raise DataValidationError(
                 "Invalid Promotion: missing " + error.args[0]
