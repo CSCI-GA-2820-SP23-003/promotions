@@ -171,8 +171,6 @@ class TestPromotionServer(TestCase):
         logging.debug(test_promotion)
         test_promo=test_promotion.serialize()
         del test_promo["is_site_wide"]
-        #test_promotion.is_site_wide = "true"
         response = self.app.post(BASE_URL, json=test_promo)
-        #self.assertRaises(TypeError)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 

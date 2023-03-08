@@ -65,7 +65,6 @@ def check_content_type(content_type):
 
     if request.headers["Content-Type"] == content_type:
         return
-
     app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
     abort(
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
@@ -141,7 +140,6 @@ def update_promotion(promo_id):
     If the provided promotion id is not found, it will return 404
     """
     app.logger.info("Request to update promotion, id: %s", promo_id)
-
     promotion = Promotion.find(promo_id)
     if not promotion:
         abort(status.HTTP_404_NOT_FOUND, f"Promotion {promo_id} not found.")
@@ -149,6 +147,5 @@ def update_promotion(promo_id):
     data = request.get_json()
     promotion.deserialize(data)
     promotion.update()
-
     app.logger.info("Promotion %s updated.", promotion.id)
     return jsonify(promotion.serialize()), status.HTTP_200_OK
