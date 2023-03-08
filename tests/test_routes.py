@@ -80,13 +80,26 @@ class TestPromotionServer(TestCase):
         test_promo1 = self._create_promotions(1)[0]
 
         # if it gets 200 status, then pass
-        resp = self.app.get("/promotions")
+        resp = self.app.get(f"{BASE_URL}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         # check id of test_promos match to the returned JSON
         data = resp.get_json()
         self.assertEqual(data[0]['id'], test_promo0.id)
         self.assertEqual(data[1]['id'], test_promo1.id)
+
+    def test_get_a_promotion(self):
+        """ Get a Promotion """
+        # get the id of a promotion
+        test_promo = self._create_promotions(1)[0]
+        
+        # if it gets 200 status, then pass
+        resp = self.app.get(f"{BASE_URL}/{test_promo.id}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        # check id of test_promo match to the returned JSON
+        data = resp.get_json()
+        self.assertEqual(data[0]['id'], test_promo.id)
 
     def test_delete_promotion(self):
         """It should Delete a Promotion"""
