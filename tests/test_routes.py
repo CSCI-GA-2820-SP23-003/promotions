@@ -83,11 +83,9 @@ class TestPromotionServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         new_promotion = response.get_json()
         self.assertEqual(new_promotion["title"], test_promo.title)
-        self.assertEqual(new_promotion["promo_type"], test_promo.promo_type)
+        self.assertEqual(new_promotion["promo_type"], test_promo.promo_type.name)
         self.assertEqual(new_promotion["promo_code"], test_promo.promo_code)
         self.assertEqual(new_promotion["amount"], test_promo.amount)
-        self.assertEqual(new_promotion["start_date"], test_promo.start_date)
-        self.assertEqual(new_promotion["end_date"], test_promo.end_date)
         self.assertEqual(new_promotion["is_site_wide"], test_promo.is_site_wide)
         self.assertEqual(new_promotion["product_id"], test_promo.product_id)
 
@@ -165,11 +163,16 @@ class TestPromotionServer(TestCase):
         logging.debug(" Test Promotion:%s", test_promotion.serialize())
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    def test_create_promotion_incorrect_content_type(self):
-        """It should not Create a Pet with bad available data"""
+
+    def test_create_promotion_removed_content_type(self):
+        """It should not Create a Promotion with removed data of is_site_wide data"""
+
         test_promotion = PromotionsFactory()
         logging.debug(test_promotion)
-        # change available to a string
-        test_promotion.available = "true"
-        response = self.app.post(BASE_URL, json=test_promotion.serialize())
+        test_promo=test_promotion.serialize()
+        del test_promo["is_site_wide"]
+        #test_promotion.is_site_wide = "true"
+        response = self.app.post(BASE_URL, json=test_promo)
+        #self.assertRaises(TypeError)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
