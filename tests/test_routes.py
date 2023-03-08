@@ -22,6 +22,8 @@ BASE_URL = "/promotions"
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
+
+
 class TestPromotionServer(TestCase):
     """ REST API Server Tests """
 
@@ -73,11 +75,9 @@ class TestPromotionServer(TestCase):
         resp = self.app.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-
-
     def test_create_promotion(self):
         """It should create a new promotion"""
-        test_promo=PromotionsFactory()
+        test_promo = PromotionsFactory()
         logging.debug("Test Promotion: %s", test_promo.serialize())
         response = self.app.post(BASE_URL, json=test_promo.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -88,9 +88,6 @@ class TestPromotionServer(TestCase):
         self.assertEqual(new_promotion["amount"], test_promo.amount)
         self.assertEqual(new_promotion["is_site_wide"], test_promo.is_site_wide)
         self.assertEqual(new_promotion["product_id"], test_promo.product_id)
-
-
-
 
     def test_get_promotions(self):
         """ list all promotions in db """
@@ -111,7 +108,7 @@ class TestPromotionServer(TestCase):
         """ Get a Promotion """
         # get the id of a promotion
         test_promo = self._create_promotions(1)[0]
-        
+
         # if it gets 200 status, then pass
         resp = self.app.get(f"{BASE_URL}/{test_promo.id}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
@@ -134,7 +131,7 @@ class TestPromotionServer(TestCase):
         """It should update a promotion with provided data if the promotion exists"""
         test_promotion = self._create_promotions(1)[0]
 
-        test_promotion.start_date = date(1999,1,1)
+        test_promotion.start_date = date(1999, 1, 1)
         test_promotion.amount = 9999
         updated_promotion = self.app.put(f"{BASE_URL}/update/{test_promotion.id}", json=test_promotion.serialize())
 
@@ -142,12 +139,10 @@ class TestPromotionServer(TestCase):
         self.assertEqual(updated_promotion.amount, test_promotion.amount)
         self.assertEqual(updated_promotion.start_date, test_promotion.start_date)
 
-
     ######################################################################
     #  T E S T   S A D   P A T H S
     ######################################################################
 
-    
     def test_update_promotion_not_found(self):
         """It should not update a promotion if the promotion does not exist"""
         promotion_id_not_found = 987654321
@@ -155,18 +150,15 @@ class TestPromotionServer(TestCase):
         promotion.id = promotion_id_not_found
         response = self.app.put(f"{BASE_URL}/update/{promotion_id_not_found}", json=promotion.serialize())
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        
 
     def test_create_promotion_no_data(self):
         """It should not Create a promotion with missing data"""
         response = self.app.post(BASE_URL, json={})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_create_promotion_no_content_type(self):
         """It should not Create a promotion with no content type"""
-         
-        test_promotion=PromotionsFactory()
+        test_promotion = PromotionsFactory()
         response = self.app.post(BASE_URL)
         logging.debug(" Test Promotion:%s", test_promotion.serialize())
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
@@ -174,6 +166,7 @@ class TestPromotionServer(TestCase):
 
     def test_create_promotion_removed_content_type(self):
         """It should not Create a Promotion with removed data of is_site_wide data"""
+
         test_promotion = PromotionsFactory()
         logging.debug(test_promotion)
         test_promo=test_promotion.serialize()

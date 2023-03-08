@@ -6,7 +6,7 @@ from datetime import date
 import os
 import logging
 import unittest
-from datetime import date
+from werkzeug.exceptions import NotFound
 from service.models import Promotion, DataValidationError, db
 from service import app
 from tests.factories import PromotionsFactory
@@ -59,25 +59,27 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(len(Promotion.all()), 0)
 
     def test_update_no_id_should_raise_error(self):
+        """It should raise an error if no id is there for a Promotion update"""
         promotion = PromotionsFactory()
-        promo.id = None
-        self.assertRaises(DataValidationError, promo.update)
+        promotion.id = None
+        self.assertRaises(DataValidationError, promotion.update)
 
     def test_update_a_promotion_happy_path(self):
-        promo = PromotionsFactory()
-        promo.create()
-        promo_id = promo.id
+        """It should update a Promotion"""
+        promotion = PromotionsFactory()
+        promotion.create()
+        promo_id = promotion.id
 
-        promo.amount = 9999
-        promo.start_date = date(2000, 1, 1)
-        promo.update()
+        promotion.amount = 9999
+        promotion.start_date = date(2000, 1, 1)
+        promotion.update()
 
         updated = Promotion.find(promo_id)
-        self.assertEqual(updated.amount, promo.amount)
-        self.assertEqual(updated.start_date, promo.start_date)
+        self.assertEqual(updated.amount, promotion.amount)
+        self.assertEqual(updated.start_date, promotion.start_date)
 
-    def test_serialize_an_order(self):
-        """It should serialize an Order"""
+    def test_serialize_a_promotion(self):
+        """It should serialize a Promotion"""
         promotion = PromotionsFactory()
         data = promotion.serialize()
         self.assertNotEqual(data, None)
@@ -98,8 +100,8 @@ class TestPromotion(unittest.TestCase):
         self.assertIn('product_id', data)
         self.assertEqual(data['product_id'], promotion.product_id)
 
-    def test_deserialize_an_order(self):
-        """It should de-serialize an Order"""
+    def test_deserialize_a_promotion(self):
+        """It should de-serialize a Promotion"""
         data = PromotionsFactory().serialize()
         promotion = Promotion()
         promotion.deserialize(data)
@@ -112,3 +114,25 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(promotion.end_date, date.fromisoformat(data['end_date']))
         self.assertEqual(promotion.is_site_wide, data['is_site_wide'])
         self.assertEqual(promotion.product_id, data['product_id'])
+
+    def test_find_or_404_found(self):
+        """It should Find or return 404 not found"""
+        promotions = PromotionsFactory.create_batch(3)
+        for promotion in promotions:
+            promotion.create()
+
+        promotion = Promotion.find_or_404(promotions[1].id)
+        self.assertIsNot(promotion, None)
+        self.assertEqual(promotion.id, promotions[1].id)
+        self.assertEqual(promotion.title, promotions[1].title)
+        self.assertEqual(promotion.promo_code, promotions[1].promo_code)
+        self.assertEqual(promotion.promo_type, promotions[1].promo_type)
+        self.assertEqual(promotion.amount, promotions[1].amount)
+        self.assertEqual(promotion.start_date, promotions[1].start_date)
+        self.assertEqual(promotion.end_date, promotions[1].end_date)
+        self.assertEqual(promotion.is_site_wide, promotions[1].is_site_wide)
+        self.assertEqual(promotion.product_id, promotions[1].product_id)
+
+    def test_find_or_404_not_found(self):
+        """It should return 404 not found"""
+        self.assertRaises(NotFound, Promotion.find_or_404, 0)
