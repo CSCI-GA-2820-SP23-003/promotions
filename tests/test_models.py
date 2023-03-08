@@ -49,6 +49,18 @@ class TestPromotion(unittest.TestCase):
     #  T E S T   C A S E S
     ######################################################################
 
+    def test_find_a_promotion(self):
+        """It should fins a Promotion"""
+        promotion = PromotionsFactory()
+        promotion.create()
+        promo_id = promotion.id
+        self.assertEqual(len(Promotion.all()), 1)
+        # find the promotion and make sure it's in the db
+        promotion.find(promotion.id)
+        search = Promotion.find(promo_id)
+        self.assertIsNot(search, None)
+        self.assertEqual(search.id, promo_id)
+
     def test_delete_a_promotion(self):
         """It should Delete a Promotion"""
         promotion = PromotionsFactory()
