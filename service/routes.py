@@ -48,6 +48,21 @@ def get_promotions():
     app.logger.info("Returning %d promotions", len(results))
     return results, status.HTTP_200_OK
 
+######################################################################
+# GET A PROMOTION
+######################################################################
+@app.route("/promotions/<int:promotion_id>", methods=["GET"])
+def get_a_promotion(promotion_id):
+    """
+    get a Promotion by lookup its id.
+
+    This endpoint will return a Promotions in db.
+    """
+    app.logger.info("Request for promotion with id: %s", promotion_id)
+    promotion = Promotion.find(promotion_id)
+    if not promotion:
+        abort(status.HTTP_404_NOT_FOUND, f"Promotion {promotion_id} not found.")
+    return promotion.serialize(), status.HTTP_200_OK
 
 ######################################################################
 # DELETE A PROMOTION
