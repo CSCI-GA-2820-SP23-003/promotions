@@ -6,6 +6,7 @@ from datetime import date
 import os
 import logging
 import unittest
+from werkzeug.exceptions import NotFound
 from service.models import Promotion, DataValidationError, db
 from service import app
 from tests.factories import PromotionsFactory
@@ -113,3 +114,25 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(promotion.end_date, date.fromisoformat(data['end_date']))
         self.assertEqual(promotion.is_site_wide, data['is_site_wide'])
         self.assertEqual(promotion.product_id, data['product_id'])
+
+    def test_find_or_404_found(self):
+        """It should Find or return 404 not found"""
+        promotions = PromotionsFactory.create_batch(3)
+        for promotion in promotions:
+            promotion.create()
+
+        promotion = Promotion.find_or_404(promotions[1].id)
+        self.assertIsNot(promotion, None)
+        self.assertEqual(promotion.id, promotions[1].id)
+        self.assertEqual(promotion.title, promotions[1].title)
+        self.assertEqual(promotion.promo_code, promotions[1].promo_code)
+        self.assertEqual(promotion.promo_type, promotions[1].promo_type)
+        self.assertEqual(promotion.amount, promotions[1].amount)
+        self.assertEqual(promotion.start_date, promotions[1].start_date)
+        self.assertEqual(promotion.end_date, promotions[1].end_date)
+        self.assertEqual(promotion.is_site_wide, promotions[1].is_site_wide)
+        self.assertEqual(promotion.product_id, promotions[1].product_id)
+
+    def test_find_or_404_not_found(self):
+        """It should return 404 not found"""
+        self.assertRaises(NotFound, Promotion.find_or_404, 0)
