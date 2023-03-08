@@ -114,7 +114,6 @@ class Promotion(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.id = data["id"]
             self.title = data["title"]
             self.promo_code = data["promo_code"]
             self.promo_type = data["promo_type"]
