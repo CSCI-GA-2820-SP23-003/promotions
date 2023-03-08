@@ -4,7 +4,7 @@ My Service
 Describe what your service does here
 """
 
-from flask import Flask, jsonify, request, url_for, make_response, abort
+from flask import jsonify, request, abort
 from service.common import status  # HTTP Status Codes
 from service.models import Promotion
 
@@ -19,7 +19,10 @@ from . import app
 def index():
     """ Root URL response """
     return (
-        "Reminder: return some useful information in json format about the service here",
+        jsonify(
+            name="Promotion Service",
+            version="1.0",
+        ),
         status.HTTP_200_OK,
     )
 
@@ -32,7 +35,7 @@ def index():
 # GET ALL PROMOTIONs
 ######################################################################
 @app.route("/promotions", methods=["GET"])
-def get_promotions(self):
+def get_promotions():
     """
     get all Promotions
 
@@ -65,3 +68,27 @@ def delete_promotions(promotion_id):
     return "", status.HTTP_204_NO_CONTENT
 
 
+######################################################################
+# UPDATE A PROMOTION
+######################################################################
+@app.route("/promotions/<int:promo_id>", methods=["PUT"])
+def update_promotion(promo_id):
+    """
+    Updates a promotion with details provided
+    
+    This endpoint will update a promotion with provided details
+    and return the updated information when successful.
+    If the provided promotion id is not found, it will return 404
+    """
+    app.logger.info("Request to update promotion, id: %s", promo_id)
+
+    promotion = Promotion.find(promo_id)
+    if not promotion:
+        abort(status.HTTP_404_NOT_FOUND, f"Promotion {promo_id} not found.")
+
+    data = request.get_json()
+    promotion.deserialize(data)
+    promotion.update()
+
+    app.logger.info("Promotion %s updated.", promotion.id)
+    return jsonify(promotion.serialize()), status.HTTP_200_OK
