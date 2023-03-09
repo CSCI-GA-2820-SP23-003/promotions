@@ -127,6 +127,11 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(promotion.is_site_wide, data['is_site_wide'])
         self.assertEqual(promotion.product_id, data['product_id'])
 
+    def test_deserialize_with_key_error(self):
+        """ It should deserialize an Promotion with a KeyError """
+        promotion = Promotion()
+        self.assertRaises(DataValidationError, promotion.deserialize, {})
+        
     def test_deserialize_bad_data(self):
         """It should not deserialize bad data"""
         data = "this is not a dictionary"
@@ -138,7 +143,7 @@ class TestPromotion(unittest.TestCase):
         data = {"id": 1, "title": "promo_bogo"}
         promotion = Promotion()
         self.assertRaises(DataValidationError, promotion.deserialize, data)
-
+        
     def test_find_or_404_found(self):
         """It should Find or return 404 not found"""
         promotions = PromotionsFactory.create_batch(3)
