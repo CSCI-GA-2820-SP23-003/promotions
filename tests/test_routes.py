@@ -113,8 +113,8 @@ class TestPromotionServer(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         # check id of test_promo match to the returned JSON
-        #data = resp.get_json()
-        #self.assertEqual(data[0]['id'], test_promo.id)
+        # data = resp.get_json()
+        # self.assertEqual(data[0]['id'], test_promo.id)
 
     def test_delete_promotion(self):
         """It should Delete a Promotion"""
@@ -128,18 +128,18 @@ class TestPromotionServer(TestCase):
 
     def test_update_promotion_happy_path(self):
         """It should update a promotion with provided data if the promotion exists"""
-        TEST_PROMOTION_TITLE = "test promotion"
+        test_promotion_title = "test promotion"
         test_promotion = self._create_promotions(1)[0]
 
         test_promotion.amount = 9999
-        test_promotion.title = TEST_PROMOTION_TITLE
+        test_promotion.title = test_promotion_title
         response = self.app.put(f"{BASE_URL}/{test_promotion.id}", json=test_promotion.serialize())
         updated_promotion = Promotion()
         updated_promotion.deserialize(response.get_json())
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(updated_promotion.amount, test_promotion.amount)
-        self.assertEqual(updated_promotion.title, TEST_PROMOTION_TITLE)
+        self.assertEqual(updated_promotion.title, test_promotion_title)
 
     ######################################################################
     #  T E S T   S A D   P A T H S
@@ -174,17 +174,16 @@ class TestPromotionServer(TestCase):
         logging.debug(" Test Promotion:%s", test_promotion.serialize())
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-
     def test_create_promotion_removed_content_type(self):
         """It should not Create a Promotion with removed data of is_site_wide data"""
 
         test_promotion = PromotionsFactory()
         logging.debug(test_promotion)
-        test_promo=test_promotion.serialize()
+        test_promo = test_promotion.serialize()
         del test_promo["is_site_wide"]
-        #test_promotion.is_site_wide = "true"
+        # test_promotion.is_site_wide = "true"
         response = self.app.post(BASE_URL, json=test_promo)
-        #self.assertRaises(TypeError)
+        # self.assertRaises(TypeError)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_unsupported_media_type(self):
@@ -206,4 +205,3 @@ class TestPromotionServer(TestCase):
         """It should not allow an illegal method call"""
         response = self.app.put(BASE_URL, json={"not": "today"})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
