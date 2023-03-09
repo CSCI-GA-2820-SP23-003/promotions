@@ -50,7 +50,7 @@ class TestPromotion(unittest.TestCase):
     ######################################################################
 
     def test_find_a_promotion(self):
-        """It should fins a Promotion"""
+        """It should find a Promotion"""
         promotion = PromotionsFactory()
         promotion.create()
         promo_id = promotion.id
