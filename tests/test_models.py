@@ -2,7 +2,7 @@
 Test cases for Promotion Model
 
 """
-from datetime import date
+from datetime import datetime
 import os
 import logging
 import unittest
@@ -83,7 +83,7 @@ class TestPromotion(unittest.TestCase):
         promo_id = promotion.id
 
         promotion.amount = 9999
-        promotion.start_date = date(2000, 1, 1)
+        promotion.start_date = datetime(2000, 1, 1)
         promotion.update()
 
         updated = Promotion.find(promo_id)
@@ -104,9 +104,9 @@ class TestPromotion(unittest.TestCase):
         self.assertIn('amount', data)
         self.assertEqual(data['amount'], promotion.amount)
         self.assertIn('start_date', data)
-        self.assertEqual(date.fromisoformat(data['start_date']), promotion.start_date)
+        self.assertEqual(datetime.fromisoformat(data['start_date']), promotion.start_date)
         self.assertIn('end_date', data)
-        self.assertEqual(date.fromisoformat(data['end_date']), promotion.end_date)
+        self.assertEqual(datetime.fromisoformat(data['end_date']), promotion.end_date)
         self.assertIn('is_site_wide', data)
         self.assertEqual(data['is_site_wide'], promotion.is_site_wide)
         self.assertIn('product_id', data)
@@ -122,8 +122,8 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(promotion.promo_code, data['promo_code'])
         self.assertEqual(promotion.promo_type, data['promo_type'])
         self.assertEqual(promotion.amount, data['amount'])
-        self.assertEqual(promotion.start_date, date.fromisoformat(data['start_date']))
-        self.assertEqual(promotion.end_date, date.fromisoformat(data['end_date']))
+        self.assertEqual(promotion.start_date, datetime.fromisoformat(data['start_date']))
+        self.assertEqual(promotion.end_date, datetime.fromisoformat(data['end_date']))
         self.assertEqual(promotion.is_site_wide, data['is_site_wide'])
         self.assertEqual(promotion.product_id, data['product_id'])
 

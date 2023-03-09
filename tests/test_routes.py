@@ -5,7 +5,6 @@ Test cases can be run with the following:
   nosetests -v --with-spec --spec-color
   coverage report -m
 """
-from datetime import date
 import os
 import logging
 from unittest import TestCase
@@ -129,15 +128,18 @@ class TestPromotionServer(TestCase):
 
     def test_update_promotion_happy_path(self):
         """It should update a promotion with provided data if the promotion exists"""
+        TEST_PROMOTION_TITLE = "test promotion"
         test_promotion = self._create_promotions(1)[0]
 
-        test_promotion.start_date = date(1999, 1, 1)
         test_promotion.amount = 9999
-        updated_promotion = self.app.put(f"{BASE_URL}/update/{test_promotion.id}", json=test_promotion.serialize())
+        test_promotion.title = TEST_PROMOTION_TITLE
+        response = self.app.put(f"{BASE_URL}/{test_promotion.id}", json=test_promotion.serialize())
+        updated_promotion = Promotion()
+        updated_promotion.deserialize(response.get_json())
 
-        self.assertEqual(updated_promotion.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(updated_promotion.amount, test_promotion.amount)
-        self.assertEqual(updated_promotion.start_date, test_promotion.start_date)
+        self.assertEqual(updated_promotion.title, TEST_PROMOTION_TITLE)
 
     ######################################################################
     #  T E S T   S A D   P A T H S
@@ -157,7 +159,7 @@ class TestPromotionServer(TestCase):
         promotion_id_not_found = 987654321
         promotion = PromotionsFactory()
         promotion.id = promotion_id_not_found
-        response = self.app.put(f"{BASE_URL}/update/{promotion_id_not_found}", json=promotion.serialize())
+        response = self.app.put(f"{BASE_URL}/{promotion_id_not_found}", json=promotion.serialize())
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_promotion_no_data(self):
