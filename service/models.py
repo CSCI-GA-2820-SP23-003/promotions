@@ -22,7 +22,7 @@ product_id (int) = id of the product
 
 import logging
 from enum import Enum
-from datetime import date
+from datetime import datetime
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -123,8 +123,8 @@ class Promotion(db.Model):
             self.promo_code = data["promo_code"]
             self.promo_type = data["promo_type"]
             self.amount = data["amount"]
-            self.start_date = date.fromisoformat(data["start_date"])
-            self.end_date = date.fromisoformat(data["end_date"])
+            self.start_date = datetime.fromisoformat(data["start_date"])
+            self.end_date = datetime.fromisoformat(data["end_date"])
             self.is_site_wide = data["is_site_wide"]
             self.product_id = data["product_id"]
             self.amount = data["amount"]
