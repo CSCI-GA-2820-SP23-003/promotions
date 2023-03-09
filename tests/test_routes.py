@@ -112,10 +112,6 @@ class TestPromotionServer(TestCase):
         resp = self.app.get(f"{BASE_URL}/{test_promo.id}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-        # check id of test_promo match to the returned JSON
-        #data = resp.get_json()
-        #self.assertEqual(data[0]['id'], test_promo.id)
-
     def test_delete_promotion(self):
         """It should Delete a Promotion"""
         test_promotion = self._create_promotions(1)[0]
@@ -174,17 +170,14 @@ class TestPromotionServer(TestCase):
         logging.debug(" Test Promotion:%s", test_promotion.serialize())
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-
     def test_create_promotion_removed_content_type(self):
         """It should not Create a Promotion with removed data of is_site_wide data"""
 
         test_promotion = PromotionsFactory()
         logging.debug(test_promotion)
-        test_promo=test_promotion.serialize()
+        test_promo = test_promotion.serialize()
         del test_promo["is_site_wide"]
-        #test_promotion.is_site_wide = "true"
         response = self.app.post(BASE_URL, json=test_promo)
-        #self.assertRaises(TypeError)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_unsupported_media_type(self):
@@ -206,4 +199,3 @@ class TestPromotionServer(TestCase):
         """It should not allow an illegal method call"""
         response = self.app.put(BASE_URL, json={"not": "today"})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
