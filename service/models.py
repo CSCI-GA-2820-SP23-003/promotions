@@ -174,4 +174,4 @@ class Promotion(db.Model):
             promotion_id (int): the id of the Promotions
         """
         logger.info("Processing title query for %s ...", promotion_id)
-        return cls.query.filter(cls.id == promotion_id)
+        return cls.query.get_or_404(promotion_id)
