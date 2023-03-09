@@ -5,6 +5,41 @@
 
 This is a skeleton you can use to start your projects
 
+## Information about this repo
+
+These are the details about a Promotion
+```
+{
+    "id": 1357256, 
+    "title": promo_sdivx,
+    "promo_code": 33245,
+    "promo_type": BOGO
+    "amount": 60,
+    "start_date": 2013-08-19,
+    "end_date": 2013-08-19,
+    "is_site_wide": False,
+    "product_id": 100
+}
+```
+We support 3 types of promotions:
+| Promo Type         | Description
+| ------------------ | -------------------------------
+| BOGO | Buy 1, Get 1.
+| DISCOUNT   | Reduce $amount % from your total.
+| FIXED | Deduct fix amount from your total
+
+These are the RESTful routes for `promotions`
+
+| Index              | Endpoint
+| ------------------ | -------------------------------
+| Create a Promotion | POST `/promotions` 
+| Read/Get an Promo by ID   | GET `/promotions/<promotion_id>`
+| Update an existing Promo | PUT `/promotions/<promotion_id>`
+| Delete an Promo | DELETE `/promotions/<promotion_id>`
+| List Promos     | GET `/promotions`
+
+The test cases have 95% test coverage and can be run with `nosetests`
+
 ## Overview
 
 This project template contains starter code for your class project. The `/service` folder contains your `models.py` file for your model and a `routes.py` file for your service. The `/tests` folder has test case starter code for testing the model and the service separately. All you need to do is add your functionality. You can use the [lab-flask-tdd](https://github.com/nyu-devops/lab-flask-tdd) for code examples to copy from.
@@ -62,3 +97,5 @@ Copyright (c) John Rofrano. All rights reserved.
 Licensed under the Apache License. See [LICENSE](LICENSE)
 
 This repository is part of the NYU masters class: **CSCI-GA.2820-001 DevOps and Agile Methodologies** created and taught by *John Rofrano*, Adjunct Instructor, NYU Courant Institute, Graduate Division, Computer Science, and NYU Stern School of Business.
+
+
