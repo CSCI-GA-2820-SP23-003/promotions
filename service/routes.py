@@ -151,4 +151,4 @@ def update_promotion(promo_id):
     promotion.update()
 
     app.logger.info("Promotion %s updated.", promotion.id)
-    return jsonify(promotion.serialize()), status.HTTP_200_OK
+    return promotion.serialize(), status.HTTP_200_OK
