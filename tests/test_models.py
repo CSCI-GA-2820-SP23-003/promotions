@@ -127,6 +127,18 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(promotion.is_site_wide, data['is_site_wide'])
         self.assertEqual(promotion.product_id, data['product_id'])
 
+    def test_deserialize_bad_data(self):
+        """It should not deserialize bad data"""
+        data = "this is not a dictionary"
+        promotion = Promotion()
+        self.assertRaises(DataValidationError, promotion.deserialize, data)
+
+    def test_deserialize_missing_data(self):
+        """It should not deserialize a Promotion with missing data"""
+        data = {"id": 1, "title": "promo_bogo"}
+        promotion = Promotion()
+        self.assertRaises(DataValidationError, promotion.deserialize, data)
+
     def test_find_or_404_found(self):
         """It should Find or return 404 not found"""
         promotions = PromotionsFactory.create_batch(3)
