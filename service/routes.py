@@ -4,7 +4,7 @@ My Service
 Describe what your service does here
 """
 
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, url_for,make_response
 from service.common import status  # HTTP Status Codes
 from service.models import Promotion
 
@@ -49,9 +49,10 @@ def create_promotion():
     promotion.deserialize(request.get_json())
     promotion.create()
     message = promotion.serialize()
+    location_url= url_for("get_a_promotion", promotion_id=promotion.id, _external=True)
 
     app.logger.info("Promotion with ID [%s] created.", promotion.id)
-    return jsonify(message), status.HTTP_201_CREATED
+    return jsonify(message), status.HTTP_201_CREATED,{"Location" : location_url}
 
 
 def check_content_type(content_type):
@@ -103,7 +104,7 @@ def get_a_promotion(promotion_id):
     promotion = Promotion.find(promotion_id)
     if not promotion:
         abort(status.HTTP_404_NOT_FOUND, f"Promotion {promotion_id} not found.")
-    return promotion.serialize(), status.HTTP_200_OK
+    return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
 
 ######################################################################
 # DELETE A PROMOTION
