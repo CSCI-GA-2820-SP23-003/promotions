@@ -18,14 +18,15 @@ from . import app
 @app.route("/")
 def index():
     """ Root URL response """
+    app.logger.info("Request for Root URL")
     return (
         jsonify(
-            name="Promotion Service",
+            name="Promotion REST API Service",
             version="1.0",
+            paths=url_for("get_promotions", _external=True)
         ),
         status.HTTP_200_OK,
     )
-
 
 ######################################################################
 #  R E S T   A P I   E N D P O I N T S
