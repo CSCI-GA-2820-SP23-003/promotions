@@ -1,6 +1,6 @@
 name: CI Build
 on:
-  push:1  2 1240
+  push:
   pull_request:
     branches:
       - master
