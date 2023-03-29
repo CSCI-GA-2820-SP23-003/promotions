@@ -6,6 +6,7 @@ Describe what your service does here
 
 from flask import jsonify, request, abort, url_for, make_response
 from service.common import status  # HTTP Status Codes
+# pylint: disable=cyclic-import
 from service.models import Promotion
 
 # Import Flask application
