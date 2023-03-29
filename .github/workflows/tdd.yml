@@ -1,6 +1,6 @@
 name: CI Build
 on:
-  push:1  2 1240
+  push:
   pull_request:
     branches:
       - master
@@ -56,3 +56,7 @@ jobs:
           
         env:
           DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/postgres"
+          
+      - name: Codecov
+        uses: codecov/codecov-action@v3.1.1
+        
