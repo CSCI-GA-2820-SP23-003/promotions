@@ -140,7 +140,7 @@ class TestPromotionServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(updated_promotion.amount, test_promotion.amount)
         self.assertEqual(updated_promotion.title, test_promotion_title)
-    
+
     def test_health(self):
         """It should check the health endpoint"""
         resp = self.app.get("/health")
