@@ -155,3 +155,13 @@ def update_promotion(promo_id):
 
     app.logger.info("Promotion %s updated.", promotion.id)
     return promotion.serialize(), status.HTTP_200_OK
+
+############################################################
+# Health Endpoint
+############################################################
+
+
+@app.route("/health")
+def health():
+    """Performs a health check for Kubernetes"""
+    return make_response(jsonify(dict(status="OK")), status.HTTP_200_OK)
