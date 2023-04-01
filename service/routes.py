@@ -79,13 +79,20 @@ def check_content_type(content_type):
 @app.route("/promotions", methods=["GET"])
 def get_promotions():
     """
-    get all Promotions
-
+    get all Promotions or a list of a promotions of a specified type as passed in the URL under attribute promo_type
+    example: http://127.0.0.1:8000/promotions?promo_type=FIXED
     This endpoint will return a list of Promotions with db
     """
-    app.logger.info("Request to list promotions")
+    app.logger.info("Request to list of promotions")
     all_promotions = []
-    all_promotions = Promotion.all()
+    promo_type=request.args.get("promo_type")
+    
+    if promo_type:
+        app.logger.info("Filtering by type: %s",promo_type)
+        all_promotions = Promotion.find_by_promo_type(promo_type)
+    else:
+        app.logger.info("All Promotions")
+        all_promotions = Promotion.all()
     results = [promo.serialize() for promo in all_promotions]
     app.logger.info("Returning %d promotions", len(results))
     return results, status.HTTP_200_OK

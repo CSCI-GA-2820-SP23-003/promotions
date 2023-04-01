@@ -175,3 +175,14 @@ class Promotion(db.Model):
         """
         logger.info("Processing title query for %s ...", promotion_id)
         return cls.query.get_or_404(promotion_id)
+    
+    @classmethod
+    def find_by_promo_type(cls, promo_type:int):
+        """Returns a list of all promotions of the given promo_type
+        
+        Args:
+            promo_type: (Enum(PromoType))= type of the promotion
+        
+        """
+        logger.info("Processing lookup query to return a list of all promotions of the type %s...", promo_type)
+        return cls.query.filter(cls.promo_type== promo_type)
