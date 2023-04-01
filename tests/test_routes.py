@@ -147,6 +147,25 @@ class TestPromotionServer(TestCase):
         self.assertEqual(resp.status_code, 200)
         data = resp.get_json()
         self.assertEqual(data["status"], "OK")
+        
+    def test_validate_promotion(self):
+        """It should validate a Promotion"""
+        test_promotion = self._create_promotions(1)[0]
+        response = self.app.put(f"{BASE_URL}/{test_promotion.id}/valid")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_promotion = response.get_json()
+        logging.debug(new_promotion)
+        self.assertEqual(new_promotion["is_site_wide"], True)
+
+    def test_invalidate_promotion(self):
+        """It should Invalidate a Promotion"""
+        test_promotion = self._create_promotions(1)[0]
+        response = self.app.put(
+            f"{BASE_URL}/{test_promotion.id}/invalid")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_promotion = response.get_json()
+        logging.debug(new_promotion)
+        self.assertEqual(new_promotion["is_site_wide"], False)
 
     ######################################################################
     #  T E S T   S A D   P A T H S
@@ -212,3 +231,22 @@ class TestPromotionServer(TestCase):
         """It should not allow an illegal method call"""
         response = self.app.put(BASE_URL, json={"not": "today"})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+    def test_valid_promotion_not_found(self):
+        """It should return a 404 Not Found Error if the id does not exist on valid promotion"""
+        # update the promotion with id that is not present in the database
+        new_promotion = {'id': 4}
+        logging.debug(new_promotion)
+        response = self.app.put(
+            f"{BASE_URL}/{new_promotion['id']}/valid")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_invalid_promotion_not_found(self):
+        """It should return a 404 Not Found Error if the id does not exist on invalid promotion"""
+        # update the promotion with id that is not present in the database
+        new_promotion = {'id': 4}
+        logging.debug(new_promotion)
+        response = self.app.put(
+            f"{BASE_URL}/{new_promotion['id']}/invalid")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
