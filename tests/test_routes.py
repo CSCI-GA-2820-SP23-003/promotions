@@ -147,7 +147,7 @@ class TestPromotionServer(TestCase):
         self.assertEqual(resp.status_code, 200)
         data = resp.get_json()
         self.assertEqual(data["status"], "OK")
-        
+
     def test_validate_promotion(self):
         """It should validate a Promotion"""
         test_promotion = self._create_promotions(1)[0]
@@ -231,7 +231,6 @@ class TestPromotionServer(TestCase):
         """It should not allow an illegal method call"""
         response = self.app.put(BASE_URL, json={"not": "today"})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
     def test_valid_promotion_not_found(self):
         """It should return a 404 Not Found Error if the id does not exist on valid promotion"""

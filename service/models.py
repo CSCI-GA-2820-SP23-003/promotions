@@ -69,7 +69,6 @@ class Promotion(db.Model):
     end_date = db.Column(db.DateTime(), nullable=False)
     is_site_wide = db.Column(db.Boolean(), nullable=False, default=False)
     product_id = db.Column(db.Integer, nullable=False)
-    valid = db.Column(db.Boolean(), nullable=False, default=False)
 
     def __repr__(self):
         return f"<Promotion {self.title} id=[{self.id}]>"
@@ -110,8 +109,7 @@ class Promotion(db.Model):
             "start_date": self.start_date.isoformat(),
             "end_date": self.end_date.isoformat(),
             "is_site_wide": self.is_site_wide,
-            "product_id": self.product_id,
-            "valid" : self.valid
+            "product_id": self.product_id
             }
 
     def deserialize(self, data):
@@ -131,8 +129,6 @@ class Promotion(db.Model):
             self.is_site_wide = data["is_site_wide"]
             self.product_id = data["product_id"]
             self.amount = data["amount"]
-            self.valid = data["valid"]
-            
         except KeyError as error:
             raise DataValidationError(
                 "Invalid Promotion: missing " + error.args[0]
@@ -191,18 +187,15 @@ class Promotion(db.Model):
         """
         logger.info("Processing lookup query to return a list of all promotions of the type %s...", promo_type)
         return cls.query.filter(cls.promo_type == promo_type)
-   
+
     def valid_on(self):
         "Turn Valid value to True"
         logger.info("Set Valid status to True")
-        #self.valid = True
         self.is_site_wide = True
         db.session.commit()
-        
+
     def valid_off(self):
         "Turn Valid value to False"
         logger.info("Set Valid status to False")
-        #self.valid = False
         self.is_site_wide = False
         db.session.commit()
-    

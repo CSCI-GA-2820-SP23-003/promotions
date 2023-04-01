@@ -176,29 +176,29 @@ def health():
 
 @app.route("/promotions/<promotion_id>/valid", methods=["PUT"])
 def valid(promotion_id):
-    
+
     """Activate the Promotion with the promotion_id"""
-    
+
     app.logger.info(" This endpoint will set the valid attribute to True ")
     promotion = Promotion.find(promotion_id)
     if not promotion:
         abort(status.HTTP_404_NOT_FOUND, f"Promotion {promotion_id} not found.")
     promotion.valid_on()
-    app.logger.info("Promotion %s has now valid status True.",promotion_id)
-    
+    app.logger.info("Promotion %s has now valid status True.", promotion_id)
+
     return promotion.serialize(), status.HTTP_200_OK
 
 
 @app.route("/promotions/<promotion_id>/invalid", methods=["PUT"])
-def inValid(promotion_id):
-    
+def invalid(promotion_id):
+
     """Activate the Promotion with the promotion_id"""
-    
+
     app.logger.info(" This endpoint will set the valid attribute to False ")
     promotion = Promotion.find(promotion_id)
     if not promotion:
         abort(status.HTTP_404_NOT_FOUND, f"Promotion {promotion_id} not found.")
     promotion.valid_off()
-    app.logger.info("Promotion %s has now valid status False.",promotion_id)
-    
+    app.logger.info("Promotion %s has now valid status False.", promotion_id)
+
     return promotion.serialize(), status.HTTP_200_OK
