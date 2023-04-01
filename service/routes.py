@@ -85,10 +85,10 @@ def get_promotions():
     """
     app.logger.info("Request to list of promotions")
     all_promotions = []
-    promo_type=request.args.get("promo_type")
-    
+    promo_type = request.args.get("promo_type")
+
     if promo_type:
-        app.logger.info("Filtering by type: %s",promo_type)
+        app.logger.info("Filtering by type: %s", promo_type)
         all_promotions = Promotion.find_by_promo_type(promo_type)
     else:
         app.logger.info("All Promotions")
