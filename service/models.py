@@ -178,15 +178,15 @@ class Promotion(db.Model):
         return cls.query.get_or_404(promotion_id)
 
     @classmethod
-    def find_by_promo_type(cls, promo_type: int):
+    def find_by_is_site_wide(cls, value: bool):
         """Returns a list of all promotions of the given promo_type
 
         Args:
             promo_type: (Enum(PromoType))= type of the promotion
 
         """
-        logger.info("Processing lookup query to return a list of all promotions of the type %s...", promo_type)
-        return cls.query.filter(cls.promo_type == promo_type)
+        logger.info("Processing lookup query to return a list of all promotions of the type %s...", value)
+        return cls.query.filter(cls.is_site_wide == value)
 
     def valid_on(self):
         "Turn Valid value to True"

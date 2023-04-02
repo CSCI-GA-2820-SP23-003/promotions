@@ -89,7 +89,7 @@ class TestPromotionServer(TestCase):
         self.assertEqual(new_promotion["product_id"], test_promo.product_id)
 
     def test_get_promotions(self):
-        """ It should return all promotions in db """
+        """ It should return all promotions in db and test of type of promotions list too"""
         # create two promotion
         test_promo0 = self._create_promotions(1)[0]
         test_promo1 = self._create_promotions(1)[0]
@@ -111,10 +111,6 @@ class TestPromotionServer(TestCase):
         # if it gets 200 status, then pass
         resp = self.app.get(f"{BASE_URL}/{test_promo.id}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-
-        # check id of test_promo match to the returned JSON
-        # data = resp.get_json()
-        # self.assertEqual(data[0]['id'], test_promo.id)
 
     def test_delete_promotion(self):
         """It should Delete a Promotion"""
@@ -154,14 +150,19 @@ class TestPromotionServer(TestCase):
         response = self.app.put(f"{BASE_URL}/{test_promotion.id}/valid")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_promotion = response.get_json()
+        false_id = -1
         logging.debug(new_promotion)
         self.assertEqual(new_promotion["is_site_wide"], True)
+        response = self.app.put(f"{BASE_URL}/{false_id}/valid")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         response = self.app.put(
             f"{BASE_URL}/{test_promotion.id}/invalid")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_promotion = response.get_json()
         logging.debug(new_promotion)
         self.assertEqual(new_promotion["is_site_wide"], False)
+        response = self.app.put(f"{BASE_URL}/{false_id}/invalid")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     ######################################################################
     #  T E S T   S A D   P A T H S

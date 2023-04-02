@@ -165,3 +165,15 @@ class TestPromotion(unittest.TestCase):
     def test_find_or_404_not_found(self):
         """It should return 404 not found"""
         self.assertRaises(NotFound, Promotion.find_or_404, 0)
+
+    def test_find_by_is_site_wide(self):
+        """It should Find Promotions by is_site_wide"""
+        promotions = PromotionsFactory.create_batch(10)
+        for promotion in promotions:
+            promotion.create()
+        test_val = promotions[0].is_site_wide
+        count = len([promotion for promotion in promotions if promotion.is_site_wide == test_val])
+        found = Promotion.find_by_is_site_wide(test_val)
+        self.assertEqual(found.count(), count)
+        for promotion in found:
+            self.assertEqual(promotion.is_site_wide, test_val)

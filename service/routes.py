@@ -80,16 +80,16 @@ def check_content_type(content_type):
 def get_promotions():
     """
     get all Promotions or a list of a promotions of a specified type as passed in the URL under attribute promo_type
-    example: http://127.0.0.1:8000/promotions?promo_type=FIXED
+    example: http://127.0.0.1:8000/promotions?is_site_wide=true
     This endpoint will return a list of Promotions with db
     """
     app.logger.info("Request to list of promotions")
     all_promotions = []
-    promo_type = request.args.get("promo_type")
+    test_val = request.args.get("is_site_wide")
 
-    if promo_type:
-        app.logger.info("Filtering by type: %s", promo_type)
-        all_promotions = Promotion.find_by_promo_type(promo_type)
+    if test_val:
+        app.logger.info("Filtering by type: %s", test_val)
+        all_promotions = Promotion.find_by_is_site_wide(test_val)
     else:
         app.logger.info("All Promotions")
         all_promotions = Promotion.all()
