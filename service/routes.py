@@ -88,7 +88,7 @@ def get_promotions():
     test_val = request.args.get("is_site_wide")
 
     if test_val:
-        app.logger.info("Filtering by type: %s", test_val)
+        app.logger.info("Filtering by query for is_site_wide: %s", test_val)
         all_promotions = Promotion.find_by_is_site_wide(test_val)
     else:
         app.logger.info("All Promotions")
