@@ -79,13 +79,20 @@ def check_content_type(content_type):
 @app.route("/promotions", methods=["GET"])
 def get_promotions():
     """
-    get all Promotions
-
+    get all Promotions or a list of a promotions of a specified type as passed in the URL under attribute promo_type
+    example: http://127.0.0.1:8000/promotions?is_site_wide=true
     This endpoint will return a list of Promotions with db
     """
-    app.logger.info("Request to list promotions")
+    app.logger.info("Request to list of promotions")
     all_promotions = []
-    all_promotions = Promotion.all()
+    test_val = request.args.get("is_site_wide")
+
+    if test_val:
+        app.logger.info("Filtering by query for is_site_wide: %s", test_val)
+        all_promotions = Promotion.find_by_is_site_wide(test_val)
+    else:
+        app.logger.info("All Promotions")
+        all_promotions = Promotion.all()
     results = [promo.serialize() for promo in all_promotions]
     app.logger.info("Returning %d promotions", len(results))
     return results, status.HTTP_200_OK
@@ -165,3 +172,33 @@ def update_promotion(promo_id):
 def health():
     """Performs a health check for Kubernetes"""
     return make_response(jsonify(dict(status="OK")), status.HTTP_200_OK)
+
+
+@app.route("/promotions/<promotion_id>/valid", methods=["PUT"])
+def valid(promotion_id):
+
+    """Activate the Promotion with the promotion_id"""
+
+    app.logger.info(" This endpoint will set the valid attribute to True ")
+    promotion = Promotion.find(promotion_id)
+    if not promotion:
+        abort(status.HTTP_404_NOT_FOUND, f"Promotion {promotion_id} not found.")
+    promotion.valid_on()
+    app.logger.info("Promotion %s has now valid status True.", promotion_id)
+
+    return promotion.serialize(), status.HTTP_200_OK
+
+
+@app.route("/promotions/<promotion_id>/invalid", methods=["PUT"])
+def invalid(promotion_id):
+
+    """Activate the Promotion with the promotion_id"""
+
+    app.logger.info(" This endpoint will set the valid attribute to False ")
+    promotion = Promotion.find(promotion_id)
+    if not promotion:
+        abort(status.HTTP_404_NOT_FOUND, f"Promotion {promotion_id} not found.")
+    promotion.valid_off()
+    app.logger.info("Promotion %s has now valid status False.", promotion_id)
+
+    return promotion.serialize(), status.HTTP_200_OK

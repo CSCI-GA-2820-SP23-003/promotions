@@ -22,6 +22,8 @@ BASE_URL = "/promotions"
 #  T E S T   C A S E S
 ######################################################################
 
+# pylint: disable=R0904
+
 
 class TestPromotionServer(TestCase):
     """ REST API Server Tests """
@@ -89,7 +91,7 @@ class TestPromotionServer(TestCase):
         self.assertEqual(new_promotion["product_id"], test_promo.product_id)
 
     def test_get_promotions(self):
-        """ It should return all promotions in db """
+        """ It should return all promotions in db and test of type of promotions list too"""
         # create two promotion
         test_promo0 = self._create_promotions(1)[0]
         test_promo1 = self._create_promotions(1)[0]
@@ -99,9 +101,9 @@ class TestPromotionServer(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         # check id of test_promos match to the returned JSON
-        data = resp.get_json()
-        self.assertEqual(data[0]['id'], test_promo0.id)
-        self.assertEqual(data[1]['id'], test_promo1.id)
+        data1 = resp.get_json()
+        self.assertEqual(data1[0]['id'], test_promo0.id)
+        self.assertEqual(data1[1]['id'], test_promo1.id)
 
     def test_get_a_promotion(self):
         """ It should return a Promotion if id of a promotion exist in database """
@@ -111,10 +113,6 @@ class TestPromotionServer(TestCase):
         # if it gets 200 status, then pass
         resp = self.app.get(f"{BASE_URL}/{test_promo.id}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-
-        # check id of test_promo match to the returned JSON
-        # data = resp.get_json()
-        # self.assertEqual(data[0]['id'], test_promo.id)
 
     def test_delete_promotion(self):
         """It should Delete a Promotion"""
@@ -147,6 +145,62 @@ class TestPromotionServer(TestCase):
         self.assertEqual(resp.status_code, 200)
         data = resp.get_json()
         self.assertEqual(data["status"], "OK")
+
+    def test_validate_promotion(self):
+        """It should check validate and invalidate a Promotion"""
+        test_promotion = self._create_promotions(1)[0]
+        response = self.app.put(f"{BASE_URL}/{test_promotion.id}/valid")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_promotion = response.get_json()
+        false_id = -1
+        logging.debug(new_promotion)
+        self.assertEqual(new_promotion["is_site_wide"], True)
+        response = self.app.put(f"{BASE_URL}/{false_id}/valid")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        response = self.app.put(
+            f"{BASE_URL}/{test_promotion.id}/invalid")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_promotion = response.get_json()
+        logging.debug(new_promotion)
+        self.assertEqual(new_promotion["is_site_wide"], False)
+        response = self.app.put(f"{BASE_URL}/{false_id}/invalid")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_query_promotion_list_by_is_site_wide(self):
+        """It should check for query Promotions by is_site_wide"""
+        promotions = self._create_promotions(10)
+        available_promotions = [
+            promotion for promotion in promotions if promotion.is_site_wide is True]
+        unavailable_promotions = [
+            promotion for promotion in promotions if promotion.is_site_wide is False]
+        available_count = len(available_promotions)
+        unavailable_count = len(unavailable_promotions)
+        logging.debug(
+            "Available Promotions [%d] %s", available_count, available_promotions)
+        logging.debug(
+            "Unavailable Promotions [%d] %s", unavailable_count, unavailable_promotions)
+
+        # test for available
+        response = self.app.get(
+            BASE_URL, query_string="is_site_wide=true"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), available_count)
+        # check the data just to be sure
+        for promotion in data:
+            self.assertEqual(promotion["is_site_wide"], True)
+
+        # test for unavailable
+        response = self.app.get(
+            BASE_URL, query_string="is_site_wide=false"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), unavailable_count)
+        # check the data just to be sure
+        for promotion in data:
+            self.assertEqual(promotion["is_site_wide"], False)
 
     ######################################################################
     #  T E S T   S A D   P A T H S

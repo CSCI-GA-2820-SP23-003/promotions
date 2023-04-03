@@ -18,6 +18,7 @@ start_date (timestamp)= start date of promotion
 end_date (timestamp)= end date of promotion
 is_site_wide (bool)= status whether promotion is site-wide
 product_id (int) = id of the product
+valid (bool)= status whether promotion is valid or invalid
 """
 
 import logging
@@ -175,3 +176,26 @@ class Promotion(db.Model):
         """
         logger.info("Processing title query for %s ...", promotion_id)
         return cls.query.get_or_404(promotion_id)
+
+    @classmethod
+    def find_by_is_site_wide(cls, value: bool):
+        """Returns a list of all promotions of the given promo_type
+
+        Args:
+            promo_type: (Enum(PromoType))= type of the promotion
+
+        """
+        logger.info("Processing lookup query to return a list of all promotions of the type %s...", value)
+        return cls.query.filter(cls.is_site_wide == value)
+
+    def valid_on(self):
+        "Turn Valid value to True"
+        logger.info("Set Valid status to True")
+        self.is_site_wide = True
+        db.session.commit()
+
+    def valid_off(self):
+        "Turn Valid value to False"
+        logger.info("Set Valid status to False")
+        self.is_site_wide = False
+        db.session.commit()
