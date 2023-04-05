@@ -1,12 +1,11 @@
 # These can be overidden with env vars.
+CLUSTER ?= nyu-devops-promotions
 REGISTRY ?= us.icr.io
-NAMESPACE ?= promotions
+NAMESPACE ?= hk3203
 IMAGE_NAME ?= promotions
 IMAGE_TAG ?= 1.0
 IMAGE ?= $(REGISTRY)/$(NAMESPACE)/$(IMAGE_NAME):$(IMAGE_TAG)
-# PLATFORM ?= "linux/amd64,linux/arm64"
 PLATFORM ?= "linux/amd64"
-CLUSTER ?= nyu-devops
 
 .PHONY: help
 help: ## Display this help
