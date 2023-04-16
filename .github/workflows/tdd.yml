@@ -2,13 +2,13 @@ name: TDD Tests
 on:
   push:
     branches:
-      - main
+      - master
     paths-ignore:
       - 'README.md'
       - '.vscode/**'
   pull_request:
     branches:
-      - main
+      - master
     paths-ignore:
     - 'README.md'
     - '.vscode/**'
