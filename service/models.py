@@ -18,7 +18,6 @@ start_date (timestamp)= start date of promotion
 end_date (timestamp)= end date of promotion
 is_site_wide (bool)= status whether promotion is site-wide
 product_id (int) = id of the product
-valid (bool)= status whether promotion is valid or invalid
 """
 
 import logging

@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/x-icon" href="static/images/newapp-icon.png">
     <link rel="stylesheet" href="static/css/cerulean_bootstrap.min.css">
   </head>
   <body>
@@ -13,13 +12,140 @@
       <div class="page-header">
           <h1>Promotions Demo REST API Service</h1>
       </div>
-    </div> <!-- container -->
+      <!-- Flash Message -->
+      <div class="table-responsive">
+        <table class="table">
+          <tr><td>Status:</td><td><span id="flash_message"></span></td></tr>
+        </table>
+      </div>
 
+      <!-- FORM -->
+      <div class="col-md-12" id="form_data">
+        <h3>Create, Retrieve, Update, Delete, Query and Activate a Promotion:</h3>
+        <div class="well">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="promotion_id">Promotion ID:</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="promotion_id" placeholder="Enter Promotion ID:">
+              </div>
+              <div class="col-sm-4">
+                <button type="submit" class="btn btn-primary" id="retrieve-btn">Retrieve</button>
+                <button type="submit" class="btn btn-danger" id="delete-btn">Delete</button>
+              </div>
+            </div>
+          </div> <!-- form horizontal -->
+
+          <div class="form-horizontal">
+            <!-- Title -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="promotion_title">Title:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="promotion_title" placeholder="Enter the title for Promotion">
+              </div>
+            </div>
+            <!-- Code -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="promotion_code">Code:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="promotion_code" placeholder="Enter code for Promotion">
+              </div>
+            </div>
+            <!-- TYPE -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="promotion_type">Type:</label>
+              <div class="col-sm-10">
+                <select class="form-control" id="promotion_type">
+                  <option value="UNKNOWN" selected>Unknown</option>
+                  <option value="BOGO">BOGO</option>
+                  <option value="DISCOUNT">DISCOUNT</option>
+                  <option value="FIXED">FIXED</option>
+                </select>
+              </div>
+            </div>
+            <!-- AMOUNT -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="promotion_amount">Amount:</label>
+              <div class="col-sm-10">
+                <input type="number" class="form-control" id="promotion_amount" placeholder="Enter amount for Promotion">
+              </div>
+            </div>
+
+            <!-- IS_SITE_WIDE -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="promotion_is_site_wide">Is_Site_Wide:</label>
+              <div class="col-sm-10">
+                <select class="form-control" id="promotion_is_site_wide">
+                  <option value="true" selected>True</option>
+                  <option value="false">False</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- START -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="promotion_start">Start:</label>
+              <div class="col-sm-10">
+                <input type="date" class="form-control" id="promotion_start" placeholder="2023-01-01">
+              </div>
+            </div>
+
+            <!-- END -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="promotion_end">End:</label>
+              <div class="col-sm-10">
+                <input type="date" class="form-control" id="promotion_end" placeholder="2024-01-01">
+              </div>
+            </div>
+
+            <!-- Product ID -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="promotion_product_id">Product ID:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="promotion_product_id" placeholder="Enter the ID for Promotion product">
+              </div>
+            </div>
+
+            <!-- SUBMIT BUTTONS -->
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary" id="search-btn">Search</button>
+                <button type="submit" class="btn btn-primary" id="clear-btn">Clear</button>
+                <button type="submit" class="btn btn-success" id="create-btn">Create</button>
+                <button type="submit" class="btn btn-warning" id="update-btn">Update</button>
+                <button type="submit" class="btn btn-primary" id="activate-btn">Activate</button>
+              </div>
+            </div>
+          </div> <!-- form horizontal -->
+
+  
+        </div> <!-- end well -->
+      </div> <!-- end Form -->
+      <!-- Search Results -->
+      <div class="table-responsive col-md-12" id="search_results">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th class="col-md-1">ID</th>
+            <th class="col-md-2">Title</th>
+            <th class="col-md-3">Code</th>
+            <th class="col-md-2">Type</th>
+            <th class="col-md-1">Start</th>
+            <th class="col-md-1">End</th>
+            <th class="col-md-2">IS_SITE_WIDE</th>
+            <th class="col-md-3">ProductID</th>
+          </tr>
+          </thead>
+        </table>
+      </div>
+      <footer>
+        <br><br>
+        <p>&copy; NYU DevOps Promotions</p>
+      </footer>
+    </div> <!-- container -->
   <script type="text/javascript" src = "static/js/jquery-3.6.0.min.js"></script>
   <script type="text/javascript" src = "static/js/bootstrap.min.js"></script>
-
   <!-- YOUR REST API -->
   <script type="text/javascript" src="static/js/rest_api.js"></script>
-
   </body>
 </html>

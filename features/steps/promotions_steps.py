@@ -22,3 +22,34 @@ Steps file for Promotions.feature
 For information on Waiting until elements are present in the HTML see:
     https://selenium-python.readthedocs.io/waits.html
 """
+
+import requests
+from behave import given
+from compare import expect
+
+
+@given('the following promotions')
+def step_impl(context):
+    """ Delete all Promotions and load new ones """
+    # List all of the promotions and delete them one by one
+    rest_endpoint = f"{context.BASE_URL}/promotions"
+    context.resp = requests.get(rest_endpoint)
+    expect(context.resp.status_code).to_equal(200)
+    for promotion in context.resp.json():
+        context.resp = requests.delete(f"{rest_endpoint}/{promotion['id']}")
+        expect(context.resp.status_code).to_equal(204)
+
+    # load the database with new promotions
+    for row in context.table:
+        payload = {
+            "title": row["Title"],
+            "promo_code": row["Code"],
+            "promo_type": row["Type"],
+            "amount": row["Amount"],
+            "start_date": row["Start"],
+            "end_date": row["End"],
+            "is_site_wide": row["Is_Site_Wide"] in ['True','true','1'],
+            "product_id": row["ProductID"]
+        }
+        context.resp = requests.post(rest_endpoint, json=payload)
+        expect(context.resp.status_code).to_equal(201)
