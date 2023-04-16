@@ -15,13 +15,20 @@ honcho==1.1.0
 # Code quality
 pylint==2.15.10
 flake8==6.0.0
+black==23.1.0
 
 # Testing dependencies
 nose==1.3.7
 pinocchio==0.4.3
 factory-boy==3.2.1
 coverage==7.1.0
-codecov==2.1.12
+#codecov==2.1.12
 
 # Utilities
 httpie==3.2.1
+
+# Behavior Driven Development
+behave==1.2.6
+selenium==4.1.0
+compare==0.2b0
+requests==2.28.2
