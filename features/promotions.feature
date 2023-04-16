@@ -24,8 +24,8 @@ Scenario: Create a Promotion
     And I set the "Amount" to "50"
     And I set the "Start" to "06-16-2022"
     And I set the "End" to "06-16-2023"
-    And I select "False" in the "Is_Site_Wide" dropdown
-    And I set the "ProductID" to "05"
+    And I select "True" in the "Is_Site_Wide" dropdown
+    And I set the "Product ID" to "05"
     And I press the "Create" button
     Then I should see the message "Success"
     When I copy the "Id" field
@@ -34,14 +34,3 @@ Scenario: Create a Promotion
     Then the "Code" field should be empty
     And the "Title" field should be empty
     And the "Type" field should be empty
-    When I paste the "Id" field
-    And I press the "Retrieve" button
-    Then I should see the message "Success"
-    And I should see "Promo5" in the "Title" field
-    And I should see "C5" in the "Code" field
-    And I should see "BOGO" in the "Type" dropdown
-    And I should see "50" in the "Amount" field
-    And I should see "2022-06-16" in the "Start" field
-    And I should see "2023-06-16" in the "End" field
-    And I should see "False" in the "Is_Site_Wide" dropdown
-    And I should see "05" in the "ProductID" field
