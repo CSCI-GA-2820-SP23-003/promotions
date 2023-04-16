@@ -8,7 +8,7 @@ $(function () {
         $("#promotion_title").val(res.title);
         $("#promotion_code").val(res.code);
         $("#promotion_type").val(res.type);
-        $("#promotion_amount").val(res.promotion_amount);
+        $("#promotion_amount").val(res.amount);
         $("#promotion_start").val(res.start);
         $("#promotion_end").val(res.end);
         $("#promotion_is_site_wide").val(res.is_site_wide);

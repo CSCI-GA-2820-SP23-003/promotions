@@ -24,13 +24,13 @@ For information on Waiting until elements are present in the HTML see:
 """
 
 import requests
-from behave import given
+import behave
 from compare import expect
 
 
-@given('the following promotions')
+@behave.given('the following promotions')
 def step_impl(context):
-    """ Delete all Promotions and load new ones """
+    """ Start Server and delete and load new ones """
     # List all of the promotions and delete them one by one
     rest_endpoint = f"{context.BASE_URL}/promotions"
     context.resp = requests.get(rest_endpoint)

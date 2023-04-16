@@ -67,7 +67,7 @@ class Promotion(db.Model):
     start_date = db.Column(db.DateTime(), nullable=False)
     end_date = db.Column(db.DateTime(), nullable=False)
     is_site_wide = db.Column(db.Boolean(), nullable=False, default=False)
-    product_id = db.Column(db.Integer, nullable=False)
+    product_id = db.Column(db.Integer, nullable=False, default=1)
 
     def __repr__(self):
         return f"<Promotion {self.title} id=[{self.id}]>"
