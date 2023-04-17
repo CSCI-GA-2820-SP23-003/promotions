@@ -48,7 +48,7 @@ def step_impl(context):
             "amount": row["Amount"],
             "start_date": row["Start"],
             "end_date": row["End"],
-            "is_site_wide": row["Is_Site_Wide"] in ['True','true','1'],
+            "is_site_wide": row["Is_Site_Wide"] in ['True', 'true', '1'],
             "product_id": row["ProductID"]
         }
         context.resp = requests.post(rest_endpoint, json=payload)

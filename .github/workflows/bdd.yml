@@ -2,14 +2,14 @@ name: BDD Tests
 on:
   push:
     branches:
-      - main
+      - master
     paths-ignore:
     - 'README.md'
     - '.vscode/**'
     - '**.md'
   pull_request:
     branches:
-      - main
+      - master
     paths-ignore:
     - 'README.md'
     - '.vscode/**'
