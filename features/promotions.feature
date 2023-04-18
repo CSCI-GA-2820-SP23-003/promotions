@@ -25,7 +25,7 @@ Scenario: Create a Promotion
     And I set the "Start" to "06-16-2022"
     And I set the "End" to "06-16-2023"
     And I select "True" in the "Is_Site_Wide" dropdown
-    And I set the "Product ID" to "05"
+    And I set the "Product ID" to "5"
     And I press the "Create" button
     Then I should see the message "Success"
     When I copy the "Id" field
@@ -34,3 +34,44 @@ Scenario: Create a Promotion
     Then the "Code" field should be empty
     And the "Title" field should be empty
     And the "Type" field should be empty
+    When I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "Promo5" in the "Title" field
+    And I should see "C5" in the "Code" field
+    And I should see "BOGO" in the "Type" dropdown
+    And I should see "50" in the "Amount" field
+    And I should see "2022-06-16" in the "Start" field
+    And I should see "2023-06-16" in the "End" field
+    And I should see "True" in the "Is_Site_Wide" dropdown
+    And I should see "5" in the "Product ID" field
+
+Scenario: GET a Promotion
+    When I visit the "Home Page"
+    And I set the "Title" to "Promo7"
+    And I set the "Code" to "C7"
+    And I select "FIXED" in the "Type" dropdown
+    And I set the "Amount" to "70"
+    And I set the "Start" to "07-17-2022"
+    And I set the "End" to "07-17-2023"
+    And I select "False" in the "Is_Site_Wide" dropdown
+    And I set the "Product ID" to "97"
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    Then the "Id" field should be empty
+    Then the "Code" field should be empty
+    And the "Title" field should be empty
+    And the "Type" field should be empty
+    When I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "Promo7" in the "Title" field
+    And I should see "C7" in the "Code" field
+    And I should see "FIXED" in the "Type" dropdown
+    And I should see "70" in the "Amount" field
+    And I should see "2022-07-17" in the "Start" field
+    And I should see "2023-07-17" in the "End" field
+    And I should see "False" in the "Is_Site_Wide" dropdown
+    And I should see "97" in the "Product ID" field
