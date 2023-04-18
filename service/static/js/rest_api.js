@@ -6,11 +6,19 @@ $(function () {
     function update_form_data(res) {
         $("#promotion_id").val(res.id);
         $("#promotion_title").val(res.title);
-        $("#promotion_code").val(res.code);
-        $("#promotion_type").val(res.type);
+        $("#promotion_code").val(res.promo_code);
+        $("#promotion_type").val(res.promo_type);
         $("#promotion_amount").val(res.amount);
-        $("#promotion_start").val(res.start);
-        $("#promotion_end").val(res.end);
+        var timestamp = res.start_date;
+        var date = new Date(timestamp);
+        var formattedDate = date.toISOString().split('T')[0]; // Extract date portion
+        $("#promotion_start").val(formattedDate);
+        //$("#promotion_start").val(res.start_date);
+        var timestamp = res.end_date;
+        var date = new Date(timestamp);
+        var formattedDate = date.toISOString().split('T')[0]; // Extract date portion
+        $("#promotion_end").val(formattedDate); // Set the value of the element with ID "promotion_end" to the extracted date
+        //$("#promotion_end").val(res.end_date);
         $("#promotion_is_site_wide").val(res.is_site_wide);
         if (res.is_site_wide == true) {
             $("#promotion_is_site_wide").val("true");
@@ -117,7 +125,7 @@ $(function () {
     // Retrieve a Promotion
     // ****************************************
     $("#retrieve-btn").click(function () {
-        let promotion_id = $("#promotion_id").val();
+        let promotion_id = parseInt($("#promotion_id").val());
         $("#flash_message").empty();
         let ajax = $.ajax({
             type: "GET",
@@ -207,9 +215,9 @@ $(function () {
     $("#search-btn").click(function () {
         let status = $("#promotion_is_site_wide").val() == "true";
         let queryString = ""
-        if (status) {
-            queryString += 'status=' + status
-        }
+        
+        queryString += 'status=' + status
+
         $("#flash_message").empty();
         let ajax = $.ajax({
             type: "GET",
@@ -235,7 +243,7 @@ $(function () {
             let firstPromotion = "";
             for(let i = 0; i < res.length; i++) {
                 let promotion = res[i];
-                table +=  `<tr id="row_${i}"><td>${promotion.id}</td><td>${promotion.title}</td><td>${promotion.code}</td><td>${promotion.type}</td><td>${promotion.promotion_amount}</td><td>${promotion.status}</td><td>${promotion.start}</td><td>${promotion.end}</td><td>${promotion.product_id}</td></tr>`;
+                table +=  `<tr id="row_${i}"><td>${promotion.id}</td><td>${promotion.title}</td><td>${promotion.promo_code}</td><td>${promotion.promo_type}</td><td>${promotion.amount}</td><td>${promotion.is_site_wide}</td><td>${promotion.start_date}</td><td>${promotion.end_date}</td><td>${promotion.product_id}</td></tr>`;
                 if (i == 0) {
                     firstPromotion = promotion;
                 }
