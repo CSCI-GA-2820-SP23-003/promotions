@@ -75,3 +75,31 @@ Scenario: GET a Promotion
     And I should see "2023-07-17" in the "End" field
     And I should see "False" in the "Is_Site_Wide" dropdown
     And I should see "97" in the "Product ID" field
+
+Scenario: UPDATE a Promotion
+    When I visit the "Home Page"
+    And I set the "Title" to "Promo1"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Promo1" in the "Title" field
+    And I should see "C1" in the "Code" field
+    And I should see "BOGO" in the "Type" dropdown
+    And I should see "50" in the "Amount" field
+    And I should see "2022-11-18" in the "Start" field
+    And I should see "2023-11-18" in the "End" field
+    And I should see "True" in the "Is_Site_Wide" dropdown
+    And I should see "1" in the "Product ID" field
+    When I change "Code" to "D94"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "D94" in the "Code" field
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "D94" in the results
+    And I should not see "C1" in the results
