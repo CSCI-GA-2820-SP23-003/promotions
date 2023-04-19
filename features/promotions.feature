@@ -134,3 +134,22 @@ Scenario: List all Promotion
     Then I should see the message "Success"
     And the promotions table should be populated
     
+Scenario: Activate a Promotion
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I set the "Title" to "Promo2"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "False" in the "Is_Site_Wide" dropdown
+    When I press the "Activate" button
+    Then I should see the message "Promotion has been Activated!"
+
+Scenario: Deactivate a Promotion
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I set the "Title" to "Promo1"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "True" in the "Is_Site_Wide" dropdown
+    When I press the "Deactivate" button
+    Then I should see the message "Promotion has been Deactivated!"

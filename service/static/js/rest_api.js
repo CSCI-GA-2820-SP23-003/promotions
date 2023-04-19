@@ -239,7 +239,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "PUT",
-            url: `/promotions/${promotion_id}/activate`,
+            url: `/promotions/${promotion_id}/valid`,
             contentType: "application/json",
             data: '',
         })
@@ -247,6 +247,33 @@ $(function () {
         ajax.done(function(res){
             clear_form_data()
             flash_message("Promotion has been Activated!")
+        });
+
+        ajax.fail(function(res){
+            flash_message("Server error!")
+        });
+    });
+
+    // ****************************************
+    // Deactivate a Promotion
+    // ****************************************
+
+    $("#deactivate-btn").click(function () {
+
+        let promotion_id = $("#promotion_id").val();
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "PUT",
+            url: `/promotions/${promotion_id}/invalid`,
+            contentType: "application/json",
+            data: '',
+        })
+
+        ajax.done(function(res){
+            clear_form_data()
+            flash_message("Promotion has been Deactivated!")
         });
 
         ajax.fail(function(res){
