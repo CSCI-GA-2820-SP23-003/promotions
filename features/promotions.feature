@@ -76,6 +76,16 @@ Scenario: GET a Promotion
     And I should see "False" in the "Is_Site_Wide" dropdown
     And I should see "97" in the "Product ID" field
 
+Scenario: QUERY Promotions Is_Site_Wide
+    When I visit the "Home Page"
+    And I select "False" in the "Is_Site_Wide" dropdown
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "promo1" in the results
+    And I should see "promo3" in the results
+    And I should not see "promo1" in the results
+    And I should not see "promo4" in the results
+
 Scenario: UPDATE a Promotion
     When I visit the "Home Page"
     And I set the "Title" to "Promo1"
