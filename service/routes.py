@@ -76,11 +76,16 @@ def get_promotions():
     """
     app.logger.info("Request to list of promotions")
     all_promotions = []
-    test_val = request.args.get("is_site_wide")
 
-    if test_val:
-        app.logger.info("Filtering by query for is_site_wide: %s", test_val)
-        all_promotions = Promotion.find_by_is_site_wide(test_val)
+    title = request.args.get("title")
+    code = request.args.get("code")
+
+    if title:
+        app.logger.info("Filtering by query for title: %s", title)
+        all_promotions = Promotion.find_by_title(title)
+    elif code:
+        app.logger.info("Filtering by query for code: %s", code)
+        all_promotions = Promotion.find_by_code(code)
     else:
         app.logger.info("All Promotions")
         all_promotions = Promotion.all()
