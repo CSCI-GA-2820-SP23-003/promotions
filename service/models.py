@@ -58,7 +58,10 @@ class Promotion(db.Model):
 
     app = None
 
+    ##################################################
     # Table Schema
+    ##################################################
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(63), nullable=False)
     promo_code = db.Column(db.String(63), nullable=True)
@@ -68,6 +71,10 @@ class Promotion(db.Model):
     end_date = db.Column(db.DateTime(), nullable=False)
     is_site_wide = db.Column(db.Boolean(), nullable=False, default=False)
     product_id = db.Column(db.Integer, nullable=False, default=1)
+
+    ##################################################
+    # INSTANCE METHODS
+    ##################################################
 
     def __repr__(self):
         return f"<Promotion {self.title} id=[{self.id}]>"
@@ -139,6 +146,22 @@ class Promotion(db.Model):
             ) from error
         return self
 
+    def valid_on(self):
+        "Turn Valid value to True"
+        logger.info("Set Valid status to True")
+        self.is_site_wide = True
+        db.session.commit()
+
+    def valid_off(self):
+        "Turn Valid value to False"
+        logger.info("Set Valid status to False")
+        self.is_site_wide = False
+        db.session.commit()
+
+    ##################################################
+    # CLASS METHODS
+    ##################################################
+
     @classmethod
     def init_db(cls, app: Flask):
         """ Initializes the database session """
@@ -187,14 +210,18 @@ class Promotion(db.Model):
         logger.info("Processing lookup query to return a list of all promotions of the type %s...", value)
         return cls.query.filter(cls.is_site_wide == value)
 
-    def valid_on(self):
-        "Turn Valid value to True"
-        logger.info("Set Valid status to True")
-        self.is_site_wide = True
-        db.session.commit()
+    @classmethod
+    def find_by_title(cls, title: str) -> list:
+        """Returns all Promotions by title
 
-    def valid_off(self):
-        "Turn Valid value to False"
-        logger.info("Set Valid status to False")
-        self.is_site_wide = False
-        db.session.commit()
+        """
+        logger.info("Processing title query for %s ...", title)
+        return cls.query.filter(cls.title == title)
+
+    @classmethod
+    def find_by_code(cls, code: str) -> list:
+        """Returns all Promotions by Promo code
+
+        """
+        logger.info("Processing title query for %s ...", code)
+        return cls.query.filter(cls.promo_code == code)

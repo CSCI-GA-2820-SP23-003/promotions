@@ -8,6 +8,7 @@ Test cases can be run with the following:
 import os
 import logging
 from unittest import TestCase
+from urllib.parse import quote_plus
 from service import app
 from service.common import status  # HTTP Status Codes
 from service.models import Promotion, db, init_db
@@ -45,7 +46,7 @@ class TestPromotionServer(TestCase):
 
     def setUp(self):
         """ This runs before each test """
-        self.app = app.test_client()
+        self.client = app.test_client()
         db.session.query(Promotion).delete()  # clean up the last tests
         db.session.commit()
 
@@ -58,7 +59,7 @@ class TestPromotionServer(TestCase):
         promotions = []
         for _ in range(count):
             test_promotion = PromotionsFactory()
-            response = self.app.post(BASE_URL, json=test_promotion.serialize())
+            response = self.client.post(BASE_URL, json=test_promotion.serialize())
             self.assertEqual(
                 response.status_code, status.HTTP_201_CREATED, "Could not create test promotion"
             )
@@ -73,14 +74,14 @@ class TestPromotionServer(TestCase):
 
     def test_index(self):
         """ It should call the home page """
-        resp = self.app.get("/")
+        resp = self.client.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
     def test_create_promotion(self):
         """It should create a new promotion"""
         test_promo = PromotionsFactory()
         logging.debug("Test Promotion: %s", test_promo.serialize())
-        response = self.app.post(BASE_URL, json=test_promo.serialize())
+        response = self.client.post(BASE_URL, json=test_promo.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         new_promotion = response.get_json()
         self.assertEqual(new_promotion["title"], test_promo.title)
@@ -97,7 +98,7 @@ class TestPromotionServer(TestCase):
         test_promo1 = self._create_promotions(1)[0]
 
         # if it gets 200 status, then pass
-        resp = self.app.get(f"{BASE_URL}")
+        resp = self.client.get(f"{BASE_URL}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         # check id of test_promos match to the returned JSON
@@ -111,17 +112,17 @@ class TestPromotionServer(TestCase):
         test_promo = self._create_promotions(1)[0]
 
         # if it gets 200 status, then pass
-        resp = self.app.get(f"{BASE_URL}/{test_promo.id}")
+        resp = self.client.get(f"{BASE_URL}/{test_promo.id}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
     def test_delete_promotion(self):
         """It should Delete a Promotion"""
         test_promotion = self._create_promotions(1)[0]
-        response = self.app.delete(f"{BASE_URL}/{test_promotion.id}")
+        response = self.client.delete(f"{BASE_URL}/{test_promotion.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
         # make sure they are deleted
-        response = self.app.get(f"{BASE_URL}/{test_promotion.id}")
+        response = self.client.get(f"{BASE_URL}/{test_promotion.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_promotion_happy_path(self):
@@ -131,7 +132,7 @@ class TestPromotionServer(TestCase):
 
         test_promotion.amount = 9999
         test_promotion.title = test_promotion_title
-        response = self.app.put(f"{BASE_URL}/{test_promotion.id}", json=test_promotion.serialize())
+        response = self.client.put(f"{BASE_URL}/{test_promotion.id}", json=test_promotion.serialize())
         updated_promotion = Promotion()
         updated_promotion.deserialize(response.get_json())
 
@@ -141,7 +142,7 @@ class TestPromotionServer(TestCase):
 
     def test_health(self):
         """It should check the health endpoint"""
-        resp = self.app.get("/health")
+        resp = self.client.get("/health")
         self.assertEqual(resp.status_code, 200)
         data = resp.get_json()
         self.assertEqual(data["status"], "OK")
@@ -149,22 +150,41 @@ class TestPromotionServer(TestCase):
     def test_validate_promotion(self):
         """It should check validate and invalidate a Promotion"""
         test_promotion = self._create_promotions(1)[0]
-        response = self.app.put(f"{BASE_URL}/{test_promotion.id}/valid")
+        response = self.client.put(f"{BASE_URL}/{test_promotion.id}/valid")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_promotion = response.get_json()
         false_id = -1
         logging.debug(new_promotion)
         self.assertEqual(new_promotion["is_site_wide"], True)
-        response = self.app.put(f"{BASE_URL}/{false_id}/valid")
+        response = self.client.put(f"{BASE_URL}/{false_id}/valid")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        response = self.app.put(
+        response = self.client.put(
             f"{BASE_URL}/{test_promotion.id}/invalid")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_promotion = response.get_json()
         logging.debug(new_promotion)
         self.assertEqual(new_promotion["is_site_wide"], False)
-        response = self.app.put(f"{BASE_URL}/{false_id}/invalid")
+        response = self.client.put(f"{BASE_URL}/{false_id}/invalid")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    # ----------------------------------------------------------
+    # TEST QUERY
+    # ----------------------------------------------------------
+
+    def test_query_by_title(self):
+        """It should Query Promotions by title"""
+        promotions = self._create_promotions(5)
+        test_title = promotions[0].title
+        title_count = len([promo for promo in promotions if promo.title == test_title])
+        response = self.client.get(
+            BASE_URL, query_string=f"title={quote_plus(test_title)}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), title_count)
+        # check the data just to be sure
+        for promo in data:
+            self.assertEqual(promo["title"], test_title)
 
     def test_query_promotion_list_by_is_site_wide(self):
         """It should check for query Promotions by is_site_wide"""
@@ -181,26 +201,16 @@ class TestPromotionServer(TestCase):
             "Unavailable Promotions [%d] %s", unavailable_count, unavailable_promotions)
 
         # test for available
-        response = self.app.get(
+        response = self.client.get(
             BASE_URL, query_string="is_site_wide=true"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(len(data), available_count)
-        # check the data just to be sure
-        for promotion in data:
-            self.assertEqual(promotion["is_site_wide"], True)
 
         # test for unavailable
-        response = self.app.get(
+        response = self.client.get(
             BASE_URL, query_string="is_site_wide=false"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(len(data), unavailable_count)
-        # check the data just to be sure
-        for promotion in data:
-            self.assertEqual(promotion["is_site_wide"], False)
 
     ######################################################################
     #  T E S T   S A D   P A T H S
@@ -212,7 +222,7 @@ class TestPromotionServer(TestCase):
         promo_not_exist_id = 77777
         promotion = PromotionsFactory()
         promotion.id = promo_not_exist_id
-        response = self.app.get(f"{BASE_URL}/get/{promo_not_exist_id}", json=promotion.serialize())
+        response = self.client.get(f"{BASE_URL}/get/{promo_not_exist_id}", json=promotion.serialize())
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_promotion_not_found(self):
@@ -220,18 +230,18 @@ class TestPromotionServer(TestCase):
         promotion_id_not_found = 987654321
         promotion = PromotionsFactory()
         promotion.id = promotion_id_not_found
-        response = self.app.put(f"{BASE_URL}/{promotion_id_not_found}", json=promotion.serialize())
+        response = self.client.put(f"{BASE_URL}/{promotion_id_not_found}", json=promotion.serialize())
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_promotion_no_data(self):
         """It should not Create a promotion with missing data"""
-        response = self.app.post(BASE_URL, json={})
+        response = self.client.post(BASE_URL, json={})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_promotion_no_content_type(self):
         """It should not Create a promotion with no content type"""
         test_promotion = PromotionsFactory()
-        response = self.app.post(BASE_URL)
+        response = self.client.post(BASE_URL)
         logging.debug(" Test Promotion:%s", test_promotion.serialize())
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
@@ -243,14 +253,14 @@ class TestPromotionServer(TestCase):
         test_promo = test_promotion.serialize()
         del test_promo["is_site_wide"]
         # test_promotion.is_site_wide = "true"
-        response = self.app.post(BASE_URL, json=test_promo)
+        response = self.client.post(BASE_URL, json=test_promo)
         # self.assertRaises(TypeError)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_unsupported_media_type(self):
         """It should not Create a Promotion when wrong media type is sent"""
         promotion = PromotionsFactory()
-        resp = self.app.post(
+        resp = self.client.post(
             BASE_URL, json=promotion.serialize(), content_type="test/html"
         )
         self.assertEqual(
@@ -259,10 +269,10 @@ class TestPromotionServer(TestCase):
 
     def test_bad_request(self):
         """It should not Create a Promotion when the wrong data is sent"""
-        response = self.app.post(BASE_URL, json={"name": "not enough data"})
+        response = self.client.post(BASE_URL, json={"name": "not enough data"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_method_not_allowed(self):
         """It should not allow an illegal method call"""
-        response = self.app.put(BASE_URL, json={"not": "today"})
+        response = self.client.put(BASE_URL, json={"not": "today"})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

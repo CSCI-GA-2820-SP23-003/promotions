@@ -177,3 +177,31 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for promotion in found:
             self.assertEqual(promotion.is_site_wide, test_val)
+
+    def test_find_by_title(self):
+        """It should Find a Promotions by Title"""
+        promotions = PromotionsFactory.create_batch(5)
+        for promotion in promotions:
+            promotion.create()
+        title = promotions[0].title
+        found = Promotion.find_by_title(title)
+        self.assertEqual(found.count(), 1)
+        self.assertEqual(found[0].title, promotions[0].title)
+        self.assertEqual(found[0].promo_code, promotions[0].promo_code)
+        self.assertEqual(found[0].promo_type, promotions[0].promo_type)
+        self.assertEqual(found[0].amount, promotions[0].amount)
+        self.assertEqual(found[0].product_id, promotions[0].product_id)
+
+    def test_find_by_code(self):
+        """It should Find a Promotions by promo_code"""
+        promotions = PromotionsFactory.create_batch(5)
+        for promotion in promotions:
+            promotion.create()
+        promo_code = promotions[0].promo_code
+        found = Promotion.find_by_code(promo_code)
+        self.assertEqual(found.count(), 1)
+        self.assertEqual(found[0].title, promotions[0].title)
+        self.assertEqual(found[0].promo_code, promotions[0].promo_code)
+        self.assertEqual(found[0].promo_type, promotions[0].promo_type)
+        self.assertEqual(found[0].amount, promotions[0].amount)
+        self.assertEqual(found[0].product_id, promotions[0].product_id)
