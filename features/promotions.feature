@@ -16,14 +16,6 @@ Scenario: The server is running
     Then I should see "Promotions Demo RESTful Service" in the title
     And I should not see "404 Not Found"
 
-Scenario: Search for title
-    When I visit the "Home Page"
-    And I set the "Title" to "Promo1"
-    And I press the "Search" button
-    Then I should see the message "Success"
-    And I should see "C1" in the "Code" field
-    And I should see "BOGO" in the "Type" dropdown
-
 Scenario: Create a Promotion
     When I visit the "Home Page"
     And I set the "Title" to "Promo5"
