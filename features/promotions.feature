@@ -111,3 +111,34 @@ Scenario: UPDATE a Promotion
     Then I should see the message "Success"
     And I should see "D94" in the results
     And I should not see "C1" in the results
+
+
+Scenario: Delete a Promotion
+    When I visit the "Home Page"
+    And I set the "Title" to "Promo7"
+    And I set the "Code" to "C7"
+    And I select "FIXED" in the "Type" dropdown
+    And I set the "Amount" to "70"
+    And I set the "Start" to "07-17-2022"
+    And I set the "End" to "07-17-2023"
+    And I select "False" in the "Is_Site_Wide" dropdown
+    And I set the "Product ID" to "97"
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    Then the "Id" field should be empty
+    Then the "Code" field should be empty
+    And the "Title" field should be empty
+    And the "Type" field should be empty
+    When I paste the "Id" field
+    And I press the "Delete" button
+    Then I should see the message "Promotion has been Deleted!"
+    
+
+Scenario: List all Promotion
+    When I visit the "Home Page"
+    And I press the "List" button
+    Then I should see the message "Success"
+    And the promotions table should be populated
+    

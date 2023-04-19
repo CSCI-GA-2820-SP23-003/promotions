@@ -164,3 +164,8 @@ def step_impl(context, element_name, text_string):
     )
     element.clear()
     element.send_keys(text_string)
+
+@behave.then('the promotions table should be populated')
+def step_impl(context):
+    search_table_children = context.driver.find_elements(By.XPATH, '//*[@id="search_results"]/table/tbody/*')
+    expect(len(search_table_children) > 0).to_be(True)

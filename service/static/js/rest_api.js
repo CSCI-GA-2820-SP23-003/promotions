@@ -31,6 +31,32 @@ $(function () {
         $("#promotion_product_id").val(res.product_id);
     }
 
+    function update_search_table(res){
+        $("#search_results").empty();
+        let table = '<table class="table table-striped" cellpadding="10">'
+        table += '<thead><tr>'
+        table += '<th class="col-md-2">ID</th>'
+        table += '<th class="col-md-2">Title</th>'
+        table += '<th class="col-md-2">Code</th>'
+        table += '<th class="col-md-2">Type</th>'
+        table += '<th class="col-md-2">Amount</th>'
+        table += '<th class="col-md-2">Is_Site_Wide</th>'
+        table += '<th class="col-md-2">Start</th>'
+        table += '<th class="col-md-2">End</th>'
+        table += '<th class="col-md-2">Product_id</th>'
+        table += '</tr></thead><tbody id="table_content">'
+        let firstPromotion = "";
+        for(let i = 0; i < res.length; i++) {
+            let promotion = res[i];
+            table +=  `<tr id="row_${i}"><td>${promotion.id}</td><td>${promotion.title}</td><td>${promotion.promo_code}</td><td>${promotion.promo_type}</td><td>${promotion.amount}</td><td>${promotion.is_site_wide}</td><td>${promotion.start_date}</td><td>${promotion.end_date}</td><td>${promotion.product_id}</td></tr>`;
+            if (i == 0) {
+                firstPromotion = promotion;
+            }
+        }
+        table += '</tbody></table>';
+        $("#search_results").append(table);
+    }
+
     /// Clears all form fields
     function clear_form_data() {
         $("#promotion_title").val("");
@@ -229,6 +255,28 @@ $(function () {
     });
 
     // ****************************************
+    // List all promotions
+    // ****************************************
+
+    $("#list-btn").click(function () {
+        $("#flash_message").empty();
+        
+        let ajax = $.ajax({
+            type: "GET",
+            url: "/promotions",
+            contentType: "application/json",
+        });
+        ajax.done(function(res){
+            console.log(res)
+            update_search_table(res)
+            flash_message("Success")
+        });
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+    });
+
+    // ****************************************
     // Search for a Promotion
     // ****************************************
 
@@ -279,31 +327,9 @@ $(function () {
 
         ajax.done(function(res){
             //alert(res.toSource())
-            $("#search_results").empty();
-            let table = '<table class="table table-striped" cellpadding="10">'
-            table += '<thead><tr>'
-            table += '<th class="col-md-2">ID</th>'
-            table += '<th class="col-md-2">Title</th>'
-            table += '<th class="col-md-2">Code</th>'
-            table += '<th class="col-md-2">Type</th>'
-            table += '<th class="col-md-2">Amount</th>'
-            table += '<th class="col-md-2">Is_Site_Wide</th>'
-            table += '<th class="col-md-2">Start</th>'
-            table += '<th class="col-md-2">End</th>'
-            table += '<th class="col-md-2">Product_id</th>'
-            table += '</tr></thead><tbody>'
 
-            let firstPromotion = "";
-            for(let i = 0; i < res.length; i++) {
-                let promotion = res[i];
-                table +=  `<tr id="row_${i}"><td>${promotion.id}</td><td>${promotion.title}</td><td>${promotion.promo_code}</td><td>${promotion.promo_type}</td><td>${promotion.amount}</td><td>${promotion.is_site_wide}</td><td>${promotion.start_date}</td><td>${promotion.end_date}</td><td>${promotion.product_id}</td></tr>`;
-                if (i == 0) {
-                    firstPromotion = promotion;
-                }
-            }
-            table += '</tbody></table>';
-            $("#search_results").append(table);
-
+            update_search_table(res)
+            
             // copy the first result to the form
             if (firstPromotion != "") {
                 update_form_data(firstPromotion)
