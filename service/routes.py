@@ -184,7 +184,7 @@ def valid(promotion_id):
 @app.route("/promotions/<promotion_id>/invalid", methods=["PUT"])
 def invalid(promotion_id):
 
-    """Activate the Promotion with the promotion_id"""
+    """Deactivate the Promotion with the promotion_id"""
 
     app.logger.info(" This endpoint will set the valid attribute to False ")
     promotion = Promotion.find(promotion_id)
