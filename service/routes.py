@@ -6,7 +6,7 @@ Describe what your service does here
 
 from flask import jsonify, request, abort, url_for, make_response
 from service.common import status  # HTTP Status Codes
-from service.models import Promotion
+from service.models import Promotion, PromoType
 
 # Import Flask application
 from . import app
@@ -78,13 +78,27 @@ def get_promotions():
     all_promotions = []
 
     title = request.args.get("title")
+    code = request.args.get("code")
+    promo_type = request.args.get("promo_type")
 
     if title:
         app.logger.info("Filtering by query for title: %s", title)
         all_promotions = Promotion.find_by_title(title)
+    elif code:
+        app.logger.info("Filtering by query for promotion code: %s", code)
+        all_promotions = Promotion.find_by_code(code)
+    elif promo_type:
+        app.logger.info("Filtering by query for promotion type: %s", promo_type)
+        promo_value = getattr(PromoType, promo_type.upper())
+        all_promotions = Promotion.find_by_type(promo_value)
+    # elif status:
+    #     app.logger.info("Filtering by query for promotion status: %s", status)
+    #     available_status = status.lower() in ["true", "yes", "1"]
+    #     all_promotions = Promotion.find_by_is_site_wide(available_status)
     else:
         app.logger.info("All Promotions")
         all_promotions = Promotion.all()
+
     results = [promo.serialize() for promo in all_promotions]
     app.logger.info("Returning %d promotions", len(results))
     return results, status.HTTP_200_OK

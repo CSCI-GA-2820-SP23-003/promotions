@@ -337,9 +337,9 @@ $(function () {
         }
         else if (type) {
             if (queryString.length > 0) {
-                queryString += '&type=' + type
+                queryString += '&promo_type=' + type
             } else {
-                queryString += 'type=' + type
+                queryString += 'promo_type=' + type
             }
         }
 
