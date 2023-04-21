@@ -205,3 +205,15 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(found[0].promo_type, promotions[0].promo_type)
         self.assertEqual(found[0].amount, promotions[0].amount)
         self.assertEqual(found[0].product_id, promotions[0].product_id)
+
+    def test_find_by_type(self):
+        """It should Find a Promotions by Promotion type"""
+        promotions = PromotionsFactory.create_batch(5)
+        for promotion in promotions:
+            promotion.create()
+        promo_type = promotions[0].promo_type
+        count = len([promo for promo in promotions if promo.promo_type == promo_type])
+        found = Promotion.find_by_type(promo_type)
+        self.assertEqual(found.count(), count)
+        for promo in found:
+            self.assertEqual(promo.promo_type, promo_type)

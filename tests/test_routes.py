@@ -11,7 +11,7 @@ from unittest import TestCase
 from urllib.parse import quote_plus
 from service import app
 from service.common import status  # HTTP Status Codes
-from service.models import Promotion, db, init_db
+from service.models import Promotion, db, init_db, PromoType
 from tests.factories import PromotionsFactory  # HTTP Status Codes
 
 DATABASE_URI = os.getenv(
@@ -185,6 +185,38 @@ class TestPromotionServer(TestCase):
         # check the data just to be sure
         for promo in data:
             self.assertEqual(promo["title"], test_title)
+
+    def test_query_by_code(self):
+        """It should Query Promotions by code"""
+        promotions = self._create_promotions(5)
+        test_code = promotions[0].title
+        code_count = len([promo for promo in promotions if promo.promo_code == test_code])
+        response = self.client.get(
+            BASE_URL, query_string=f"code={quote_plus(test_code)}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), code_count)
+
+        # check the data just to be sure
+        for promo in data:
+            self.assertEqual(promo["code"], test_code)
+
+    def test_query_by_type(self):
+        """It should Query Promotions by Promotion type"""
+        promotions = self._create_promotions(5)
+        bogo_promos = [promo for promo in promotions if promo.promo_type == PromoType.BOGO]
+        bogo_count = len(bogo_promos)
+        logging.debug("BOGO Promotions [%d] %s", bogo_count, bogo_promos)
+
+        # test for available
+        response = self.client.get(BASE_URL, query_string="promo_type=BOGO")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), bogo_count)
+        # check the data just to be sure
+        for promo in data:
+            self.assertEqual(promo["promo_type"], PromoType.BOGO.name)
 
     def test_query_promotion_list_by_is_site_wide(self):
         """It should check for query Promotions by is_site_wide"""

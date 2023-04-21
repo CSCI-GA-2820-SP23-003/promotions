@@ -153,3 +153,20 @@ Scenario: Deactivate a Promotion
     And I should see "True" in the "Is_Site_Wide" dropdown
     When I press the "Deactivate" button
     Then I should see the message "Promotion has been Deactivated!"
+
+Scenario: Search by Promotion Code
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I set the "Code" to "C2"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "False" in the "Is_Site_Wide" dropdown
+    And I should see "20" in the "Amount" field
+
+Scenario: Search by Promotion Type
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I select "DISCOUNT" in the "Type" dropdown
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "20" in the "Amount" field
