@@ -5,7 +5,7 @@ Feature: The promotions service back-end
 
 Background:
     Given the following promotions
-        | Title       |  Code  |  Type      | Amount  |   Start      |  End        |  Is_Site_Wide | ProductID |
+        | Title       |  Code  |  Type      | Amount  |   Start      |  End        |  Is_Site_Wide  | ProductID |
         | Promo1      |   C1   |  BOGO      |   50    |  2022-11-18  | 2023-11-18  |    True     |     1     |
         | Promo2      |   C2   |  DISCOUNT  |   20    |  2022-08-13  | 2023-08-13  |    False    |    2      | 
         | Promo3      |   C3   |  FIXED     |   10    |  2022-04-01  | 2023-04-01  |    False    |     3     |

@@ -150,21 +150,21 @@ class TestPromotionServer(TestCase):
     def test_validate_promotion(self):
         """It should check validate and invalidate a Promotion"""
         test_promotion = self._create_promotions(1)[0]
-        response = self.client.put(f"{BASE_URL}/{test_promotion.id}/valid")
+        response = self.client.put(f"{BASE_URL}/{test_promotion.id}/active")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_promotion = response.get_json()
         false_id = -1
         logging.debug(new_promotion)
         self.assertEqual(new_promotion["is_site_wide"], True)
-        response = self.client.put(f"{BASE_URL}/{false_id}/valid")
+        response = self.client.put(f"{BASE_URL}/{false_id}/active")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         response = self.client.put(
-            f"{BASE_URL}/{test_promotion.id}/invalid")
+            f"{BASE_URL}/{test_promotion.id}/deactive")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_promotion = response.get_json()
         logging.debug(new_promotion)
         self.assertEqual(new_promotion["is_site_wide"], False)
-        response = self.client.put(f"{BASE_URL}/{false_id}/invalid")
+        response = self.client.put(f"{BASE_URL}/{false_id}/deactive")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     # ----------------------------------------------------------
@@ -284,9 +284,7 @@ class TestPromotionServer(TestCase):
         logging.debug(test_promotion)
         test_promo = test_promotion.serialize()
         del test_promo["is_site_wide"]
-        # test_promotion.is_site_wide = "true"
         response = self.client.post(BASE_URL, json=test_promo)
-        # self.assertRaises(TypeError)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_unsupported_media_type(self):

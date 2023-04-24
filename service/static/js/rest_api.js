@@ -237,7 +237,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "PUT",
-            url: `/promotions/${promotion_id}/valid`,
+            url: `/promotions/${promotion_id}/active`,
             contentType: "application/json",
             data: '',
         })
@@ -264,7 +264,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "PUT",
-            url: `/promotions/${promotion_id}/invalid`,
+            url: `/promotions/${promotion_id}/deactive`,
             contentType: "application/json",
             data: '',
         })

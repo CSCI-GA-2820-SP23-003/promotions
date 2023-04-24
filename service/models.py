@@ -146,13 +146,13 @@ class Promotion(db.Model):
             ) from error
         return self
 
-    def valid_on(self):
+    def activate(self):
         "Turn Valid value to True"
         logger.info("Set Valid status to True")
         self.is_site_wide = True
         db.session.commit()
 
-    def valid_off(self):
+    def deactivate(self):
         "Turn Valid value to False"
         logger.info("Set Valid status to False")
         self.is_site_wide = False

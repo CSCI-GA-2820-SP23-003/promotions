@@ -6,15 +6,47 @@ and SQL database
 """
 import sys
 from flask import Flask
+from flask_restx import Api
 from service import config
 from service.common import log_handlers
 
 # Create Flask application
 app = Flask(__name__)
+
+app.url_map.strict_slashes = False
+
 app.config.from_object(config)
+
+# app.config['SECRET_KEY'] = 'secret-for-dev'
+# app.config['LOGGING_LEVEL'] = logging.INFO
+# app.config['API_KEY'] = os.getenv('API_KEY')
+
+# Document the type of authorization required (Optional)
+# authorizations = {
+#     'apikey': {
+#         'type': 'apiKey',
+#         'in': 'header',
+#         'name': 'X-Api-Key'
+#     }
+# }
+
+######################################################################
+# Configure Swagger before initializing it
+######################################################################
+api = Api(app,
+          version='1.0.0',
+          title='Promotions REST API Service',
+          description='This is a Promotion Microservice for an E-Commerce.',
+          default='promotions',
+          default_label='Promtions team operations',
+          doc='/apidocs', # default also could use doc='/apidocs/'
+          #authorizations=authorizations, # Optional security here
+          prefix='/api'
+         )
 
 # Dependencies require we import the routes AFTER the Flask app is created
 # pylint: disable=wrong-import-position, wrong-import-order, cyclic-import
+# Import the routes After the Flask app is created
 from service import routes, models  # noqa: E402, E261
 # pylint: disable=wrong-import-position
 from service.common import error_handlers, cli_commands  # noqa: F401, E402
