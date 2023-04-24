@@ -91,10 +91,6 @@ def get_promotions():
         app.logger.info("Filtering by query for promotion type: %s", promo_type)
         promo_value = getattr(PromoType, promo_type.upper())
         all_promotions = Promotion.find_by_type(promo_value)
-    # elif status:
-    #     app.logger.info("Filtering by query for promotion status: %s", status)
-    #     available_status = status.lower() in ["true", "yes", "1"]
-    #     all_promotions = Promotion.find_by_is_site_wide(available_status)
     else:
         app.logger.info("All Promotions")
         all_promotions = Promotion.all()
