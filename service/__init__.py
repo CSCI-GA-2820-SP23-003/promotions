@@ -39,10 +39,8 @@ api = Api(app,
           description='This is a Promotion Microservice for an E-Commerce.',
           default='promotions',
           default_label='Promtions team operations',
-          doc='/apidocs', # default also could use doc='/apidocs/'
-          #authorizations=authorizations, # Optional security here
-          prefix='/api'
-         )
+          doc='/apidocs',   # default also could use doc='/apidocs/'
+          prefix='/api')
 
 # Dependencies require we import the routes AFTER the Flask app is created
 # pylint: disable=wrong-import-position, wrong-import-order, cyclic-import

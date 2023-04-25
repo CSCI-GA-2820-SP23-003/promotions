@@ -148,7 +148,7 @@ class TestPromotionServer(TestCase):
         self.assertEqual(data["status"], "OK")
 
     def test_validate_promotion(self):
-        """It should check validate and invalidate a Promotion"""
+        """It should check status of a Promotion"""
         test_promotion = self._create_promotions(1)[0]
         response = self.client.put(f"{BASE_URL}/{test_promotion.id}/active")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
