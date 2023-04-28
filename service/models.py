@@ -43,6 +43,10 @@ class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
 
 
+class DatabaseConnectionError(Exception):
+    """Custom Exception when database connection fails"""
+
+
 class PromoType(Enum):
     """ Enumeration of valid promotion types"""
     BOGO = 1		    # buy X get 1 free
@@ -146,14 +150,14 @@ class Promotion(db.Model):
             ) from error
         return self
 
-    def valid_on(self):
-        "Turn Valid value to True"
+    def activate(self):
+        "Turn status to True"
         logger.info("Set Valid status to True")
         self.is_site_wide = True
         db.session.commit()
 
-    def valid_off(self):
-        "Turn Valid value to False"
+    def deactivate(self):
+        "Turn status to False"
         logger.info("Set Valid status to False")
         self.is_site_wide = False
         db.session.commit()

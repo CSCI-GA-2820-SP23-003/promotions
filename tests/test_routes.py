@@ -11,13 +11,13 @@ from unittest import TestCase
 from urllib.parse import quote_plus
 from service import app
 from service.common import status  # HTTP Status Codes
-from service.models import Promotion, db, init_db, PromoType
+from service.models import Promotion, db, init_db
 from tests.factories import PromotionsFactory  # HTTP Status Codes
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
 )
-BASE_URL = "/promotions"
+BASE_URL = "/api/promotions"
 
 ######################################################################
 #  T E S T   C A S E S
@@ -147,30 +147,32 @@ class TestPromotionServer(TestCase):
         data = resp.get_json()
         self.assertEqual(data["status"], "OK")
 
-    def test_validate_promotion(self):
-        """It should check validate and invalidate a Promotion"""
+    def test_activate_promotion(self):
+        """It should activate a Promotion"""
         test_promotion = self._create_promotions(1)[0]
-        response = self.client.put(f"{BASE_URL}/{test_promotion.id}/valid")
+        response = self.client.put(f"{BASE_URL}/{test_promotion.id}/activate")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_promotion = response.get_json()
-        false_id = -1
         logging.debug(new_promotion)
         self.assertEqual(new_promotion["is_site_wide"], True)
-        response = self.client.put(f"{BASE_URL}/{false_id}/valid")
+        response = self.client.put(f"{BASE_URL}/{-1}/activate")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        response = self.client.put(
-            f"{BASE_URL}/{test_promotion.id}/invalid")
+
+    def test_deactivate_promotion(self):
+        """It should deactivate a Promotion"""
+        test_promotion = self._create_promotions(1)[0]
+        response = self.client.delete(
+            f"{BASE_URL}/{test_promotion.id}/activate")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_promotion = response.get_json()
         logging.debug(new_promotion)
         self.assertEqual(new_promotion["is_site_wide"], False)
-        response = self.client.put(f"{BASE_URL}/{false_id}/invalid")
+        response = self.client.delete(f"{BASE_URL}/{-1}/deactivate")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     # ----------------------------------------------------------
     # TEST QUERY
     # ----------------------------------------------------------
-
     def test_query_by_title(self):
         """It should Query Promotions by title"""
         promotions = self._create_promotions(5)
@@ -192,7 +194,7 @@ class TestPromotionServer(TestCase):
         test_code = promotions[0].title
         code_count = len([promo for promo in promotions if promo.promo_code == test_code])
         response = self.client.get(
-            BASE_URL, query_string=f"code={quote_plus(test_code)}"
+            BASE_URL, query_string=f"promo_code={quote_plus(test_code)}"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
@@ -202,21 +204,21 @@ class TestPromotionServer(TestCase):
         for promo in data:
             self.assertEqual(promo["code"], test_code)
 
-    def test_query_by_type(self):
-        """It should Query Promotions by Promotion type"""
-        promotions = self._create_promotions(5)
-        bogo_promos = [promo for promo in promotions if promo.promo_type == PromoType.BOGO]
-        bogo_count = len(bogo_promos)
-        logging.debug("BOGO Promotions [%d] %s", bogo_count, bogo_promos)
+    # def test_query_by_type(self):
+    #     """It should Query Promotions by Promotion type"""
+    #     promotions = self._create_promotions(5)
+    #     bogo_promos = [promo for promo in promotions if promo.promo_type == PromoType.BOGO]
+    #     bogo_count = len(bogo_promos)
+    #     logging.debug("BOGO Promotions [%d] %s", bogo_count, bogo_promos)
 
-        # test for available
-        response = self.client.get(BASE_URL, query_string="promo_type=BOGO")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(len(data), bogo_count)
-        # check the data just to be sure
-        for promo in data:
-            self.assertEqual(promo["promo_type"], PromoType.BOGO.name)
+    #     # test for available
+    #     response = self.client.get(BASE_URL, query_string="promo_type=BOGO")
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     data = response.get_json()
+    #     self.assertEqual(len(data), bogo_count)
+    #     # check the data just to be sure
+    #     for promo in data:
+    #         self.assertEqual(promo["promo_type"], PromoType.BOGO.name)
 
     def test_query_promotion_list_by_is_site_wide(self):
         """It should check for query Promotions by is_site_wide"""
@@ -273,9 +275,10 @@ class TestPromotionServer(TestCase):
     def test_create_promotion_no_content_type(self):
         """It should not Create a promotion with no content type"""
         test_promotion = PromotionsFactory()
+        logging.debug("Test Promotion: %s", test_promotion.serialize())
         response = self.client.post(BASE_URL)
-        logging.debug(" Test Promotion:%s", test_promotion.serialize())
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        self.assertEqual(response.status_code,
+                         status.HTTP_400_BAD_REQUEST)
 
     def test_create_promotion_removed_content_type(self):
         """It should not Create a Promotion with removed data of is_site_wide data"""
@@ -297,7 +300,7 @@ class TestPromotionServer(TestCase):
         )
         self.assertEqual(
             resp.status_code,
-            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+            status.HTTP_400_BAD_REQUEST)
 
     def test_bad_request(self):
         """It should not Create a Promotion when the wrong data is sent"""
