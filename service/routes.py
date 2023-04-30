@@ -1,7 +1,17 @@
 """
-My Service
+Promotion  Service
 
-Describe what your service does here
+The promotions service is a representation of the promotion that can be used by the customers.
+Promotion Service with Swagger and Flask RESTX
+Paths:
+------
+GET /api/promotions - Returns a list all of the Promotions
+GET /api/promotions/{id} - Returns the Promotion with a given id number
+POST /api/promotions - Creates a new Promotion record in the database
+PUT /api/promotions/{id} - Updates a Promotion record in the database
+DELETE /api/promotions/{id} - Deletes a Promotion record in the database
+PUT /api/promotions/{id}/activate - Activates a Promotion
+DELETE /api/promotions/{id}/activate - Deactivates a Promotion
 """
 
 from flask import request, jsonify, make_response
