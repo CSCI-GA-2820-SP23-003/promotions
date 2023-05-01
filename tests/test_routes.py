@@ -9,10 +9,11 @@ import os
 import logging
 from unittest import TestCase
 from urllib.parse import quote_plus
-from service import app
+from service import app, error_handlers
 from service.common import status  # HTTP Status Codes
 from service.models import Promotion, db, init_db
 from tests.factories import PromotionsFactory  # HTTP Status Codes
+from flask import jsonify
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -311,3 +312,17 @@ class TestPromotionServer(TestCase):
         """It should not allow an illegal method call"""
         response = self.client.put(BASE_URL, json={"not": "today"})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_database_connection_error(self):
+        """test_database_connection_error"""
+        err_msg = "Service Unavailable"
+        response = error_handlers.database_connection_error(err_msg)
+        t = (
+        	jsonify(
+        		status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        		error="Service Unavailable",
+				message=err_msg,
+			),
+			status.HTTP_503_SERVICE_UNAVAILABLE,
+		)
+        self.assertEqual(str(response), str(t))
