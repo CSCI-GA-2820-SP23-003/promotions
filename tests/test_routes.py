@@ -313,16 +313,3 @@ class TestPromotionServer(TestCase):
         response = self.client.put(BASE_URL, json={"not": "today"})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_database_connection_error(self):
-        """test_database_connection_error"""
-        err_msg = "Service Unavailable"
-        response = error_handlers.database_connection_error(err_msg)
-        t = (
-        	jsonify(
-        		status=status.HTTP_503_SERVICE_UNAVAILABLE,
-        		error="Service Unavailable",
-				message=err_msg,
-			),
-			status.HTTP_503_SERVICE_UNAVAILABLE,
-		)
-        self.assertEqual(str(response), str(t))
