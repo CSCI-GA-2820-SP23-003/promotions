@@ -36,15 +36,3 @@ def request_validation_error(error):
         'error': 'Bad Request',
         'message': message
     }, status.HTTP_400_BAD_REQUEST
-
-
-@api.errorhandler(DatabaseConnectionError)
-def database_connection_error(error):
-    """ Handles Database Errors from connection attempts """
-    message = str(error)
-    app.logger.critical(message)
-    return {
-        'status_code': status.HTTP_503_SERVICE_UNAVAILABLE,
-        'error': 'Service Unavailable',
-        'message': message
-    }, status.HTTP_503_SERVICE_UNAVAILABLE
