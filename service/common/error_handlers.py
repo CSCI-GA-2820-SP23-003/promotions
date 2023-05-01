@@ -17,15 +17,14 @@
 """
 Module: error_handlers
 """
-from service import app, api
 from service.models import DataValidationError
+from service import app, api
 from . import status
 
 
 ######################################################################
 # Error Handlers
 ######################################################################
-
 @api.errorhandler(DataValidationError)
 def request_validation_error(error):
     """ Handles Value Errors from bad data """
