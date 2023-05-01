@@ -17,8 +17,8 @@
 """
 Module: error_handlers
 """
-from service.models import DataValidationError, DatabaseConnectionError
 from service import app, api
+from service.models import DataValidationError
 from . import status
 
 
