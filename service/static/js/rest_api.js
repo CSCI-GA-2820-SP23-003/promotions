@@ -150,7 +150,7 @@ $(function () {
         $("#flash_message").empty();
         let ajax = $.ajax({
                 type: "PUT",
-                url: `/promotions/${promotion_id}`,
+                url: `/api/promotions/${promotion_id}`,
                 contentType: "application/json",
                 data: JSON.stringify(data)
             })
@@ -239,7 +239,8 @@ $(function () {
 
         let ajax = $.ajax({
             type: "PUT",
-            url: `/api/promotions/${promotion_id}/valid`,
+            url: `/api/promotions/${promotion_id}/activate`,
+
             contentType: "application/json",
             data: '',
         })
@@ -265,8 +266,8 @@ $(function () {
         $("#flash_message").empty();
 
         let ajax = $.ajax({
-            type: "PUT",
-            url: `/api/promotions/${promotion_id}/invalid`,
+            type: "DELETE",
+            url: `/api/promotions/${promotion_id}/activate`,
             contentType: "application/json",
             data: '',
         })
@@ -312,11 +313,9 @@ $(function () {
         let status = $("#promotion_is_site_wide").val() == "true";
         let title = $("#promotion_title").val();
         let code = $("#promotion_code").val();
-        let type = $("#promotion_type").val();
 
         let queryString = ""
 
-        //queryString += 'status=' + status
         
         if (status){
             queryString += 'status=' + status
@@ -330,16 +329,9 @@ $(function () {
         }
         else if (code) {
             if (queryString.length > 0) {
-                queryString += '&code=' + code
+                queryString += '&promo_code=' + code
             } else {
-                queryString += 'code=' + code
-            }
-        }
-        else if (type) {
-            if (queryString.length > 0) {
-                queryString += '&promo_type=' + type
-            } else {
-                queryString += 'promo_type=' + type
+                queryString += 'promo_code=' + code
             }
         }
 
@@ -390,119 +382,6 @@ $(function () {
         ajax.fail(function(res){
             flash_message(res.responseJSON.message)
         });
-
-    // $("#search-btn").click(function () {
-
-    //     let title = $("#promotion_title").val();
-    //     let code = $("#promotion_code").val();
-    //     let type = $("#promotion_type").val();
-    //     let amount = $("#promotion_amount").val();
-    //     let status = $("#promotion_is_site_wide").val();
-    //     let end = $("#promotion_end").val();
-    //     let start = $("#promotion_start").val();
-    //     let product_id = $("#promotion_product_id").val();
-        
-    //     let queryString = ""
-        
-    //     if (title) {
-    //         queryString += 'title=' + title
-    //     }
-    //     else if (code) {
-    //         if (queryString.length > 0) {
-    //             queryString += '&code=' + code
-    //         } else {
-    //             queryString += 'code=' + code
-    //         }
-    //     }
-    //     else if (type) {
-    //         if (queryString.length > 0) {
-    //             queryString += '&type=' + type
-    //         } else {
-    //             queryString += 'type=' + type
-    //         }
-    //     }
-    //     else if (amount) {
-    //         if (queryString.length > 0) {
-    //             queryString += '&amount=' + amount
-    //         } else {
-    //             queryString += 'amount=' + amount
-    //         }
-    //     }
-    //     else if (status) {
-    //         if (queryString.length > 0) {
-    //             queryString += '&status=' + status
-    //         } else {
-    //             queryString += 'status=' + status
-    //         }
-    //     }
-    //     else if (end) {
-    //         if (queryString.length > 0) {
-    //             queryString += '&end=' + end
-    //         } else {
-    //             queryString += 'end=' + end
-    //         }
-    //     }
-    //     else if (start) {
-    //         if (queryString.length > 0) {
-    //             queryString += '&start=' + start
-    //         } else {
-    //             queryString += 'start=' + start
-    //         }
-    //     }
-    //     else if (product_id) {
-    //         if (queryString.length > 0) {
-    //             queryString += '&product_id=' + product_id
-    //         } else {
-    //             queryString += 'product_id=' + product_id
-    //         }
-    //     }
-
-    //     $("#flash_message").empty();
-
-    //     let ajax = $.ajax({
-    //         type: "GET",
-    //         url: `/api/promotions?${queryString}`,
-    //         contentType: "application/json",
-    //         data: ''
-    //     })
-
-    //     ajax.done(function(res){
-    //         //alert(res.toSource())
-    //         $("#search_results").empty();
-    //         let table = '<table class="table table-striped" cellpadding="10">'
-    //         table += '<thead><tr>'
-    //         table += '<th class="col-md-2">ID</th>'
-    //         table += '<th class="col-md-2">Title</th>'
-    //         table += '<th class="col-md-2">Code</th>'
-    //         table += '<th class="col-md-2">Type</th>'
-    //         table += '<th class="col-md-2">Amount</th>'
-    //         table += '<th class="col-md-2">Is_Site_Wide</th>'
-    //         table += '<th class="col-md-2">Start</th>'
-    //         table += '<th class="col-md-2">End</th>'
-    //         table += '<th class="col-md-2">Product_id</th>'
-    //         table += '</tr></thead><tbody>'
-    //         let firstPromotion = null;
-    //         for(let i = 0; i < res.length; i++) {
-    //             let promotion = res[i];
-    //             table +=  `<tr id="row_${i}"><td>${promotion.id}</td><td>${promotion.title}</td><td>${promotion.promo_code}</td><td>${promotion.promo_type}</td><td>${promotion.amount}</td><td>${promotion.is_site_wide}</td><td>${promotion.start_date}</td><td>${promotion.end_date}</td><td>${promotion.product_id}</td></tr>`;
-    //             if (firstPromotion === null) {
-    //                 firstPromotion = promotion;
-    //             }
-    //         }
-    //         table += '</tbody></table>';
-    //         $("#search_results").append(table);
-
-    //         // copy the first result to the form
-    //         if (firstPromotion !== null) {
-    //             update_form_data(firstPromotion)
-    //         }
-
-    //         flash_message("Success")
-    //     });
-
-    //     ajax.fail(function(res){
-    //         flash_message(res.responseJSON.message)
-    //     });
 
     });
 
