@@ -55,6 +55,7 @@ class TestPromotion(unittest.TestCase):
         promotion.create()
         promo_id = promotion.id
         self.assertEqual(len(Promotion.all()), 1)
+
         # find the promotion and make sure it's in the db
         promotion.find(promotion.id)
         search = Promotion.find(promo_id)
@@ -66,6 +67,7 @@ class TestPromotion(unittest.TestCase):
         promotion = PromotionsFactory()
         promotion.create()
         self.assertEqual(len(Promotion.all()), 1)
+
         # delete the promotion and make sure it isn't in the database
         promotion.delete()
         self.assertEqual(len(Promotion.all()), 0)

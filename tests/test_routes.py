@@ -34,6 +34,7 @@ class TestPromotionServer(TestCase):
         """ This runs once before the entire test suite """
         app.config["TESTING"] = True
         app.config["DEBUG"] = False
+
         # Set up the test database
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
         app.logger.setLevel(logging.CRITICAL)
@@ -121,6 +122,7 @@ class TestPromotionServer(TestCase):
         response = self.client.delete(f"{BASE_URL}/{test_promotion.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
+
         # make sure they are deleted
         response = self.client.get(f"{BASE_URL}/{test_promotion.id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -184,6 +186,7 @@ class TestPromotionServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), title_count)
+
         # check the data just to be sure
         for promo in data:
             self.assertEqual(promo["title"], test_title)
@@ -203,22 +206,6 @@ class TestPromotionServer(TestCase):
         # check the data just to be sure
         for promo in data:
             self.assertEqual(promo["code"], test_code)
-
-    # def test_query_by_type(self):
-    #     """It should Query Promotions by Promotion type"""
-    #     promotions = self._create_promotions(5)
-    #     bogo_promos = [promo for promo in promotions if promo.promo_type == PromoType.BOGO]
-    #     bogo_count = len(bogo_promos)
-    #     logging.debug("BOGO Promotions [%d] %s", bogo_count, bogo_promos)
-
-    #     # test for available
-    #     response = self.client.get(BASE_URL, query_string="promo_type=BOGO")
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     data = response.get_json()
-    #     self.assertEqual(len(data), bogo_count)
-    #     # check the data just to be sure
-    #     for promo in data:
-    #         self.assertEqual(promo["promo_type"], PromoType.BOGO.name)
 
     def test_query_promotion_list_by_is_site_wide(self):
         """It should check for query Promotions by is_site_wide"""
@@ -252,7 +239,6 @@ class TestPromotionServer(TestCase):
 
     def test_not_get_a_promotion(self):
         """It should not return a promotion if the promotion does not exist"""
-        # get a id of a promotion not exist
         promo_not_exist_id = 77777
         promotion = PromotionsFactory()
         promotion.id = promo_not_exist_id
@@ -287,9 +273,7 @@ class TestPromotionServer(TestCase):
         logging.debug(test_promotion)
         test_promo = test_promotion.serialize()
         del test_promo["is_site_wide"]
-        # test_promotion.is_site_wide = "true"
         response = self.client.post(BASE_URL, json=test_promo)
-        # self.assertRaises(TypeError)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_unsupported_media_type(self):
