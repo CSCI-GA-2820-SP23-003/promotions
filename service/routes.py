@@ -1,7 +1,17 @@
 """
-My Service
+Promotion  Service
 
-Describe what your service does here
+The promotions service is a representation of the promotion that can be used by the customers.
+Promotion Service with Swagger and Flask RESTX
+Paths:
+------
+GET /api/promotions - Returns a list all of the Promotions
+GET /api/promotions/{id} - Returns the Promotion with a given id number
+POST /api/promotions - Creates a new Promotion record in the database
+PUT /api/promotions/{id} - Updates a Promotion record in the database
+DELETE /api/promotions/{id} - Deletes a Promotion record in the database
+PUT /api/promotions/{id}/activate - Activates a Promotion
+DELETE /api/promotions/{id}/activate - Deactivates a Promotion
 """
 
 from flask import request, jsonify, make_response
@@ -111,7 +121,8 @@ class PromotionResource(Resource):
             abort(status.HTTP_404_NOT_FOUND,
                   f"Promotion with id '{promotion_id}' was not found.")
         app.logger.debug('Payload = %s', api.payload)
-        promotion.deserialize(request.get_json())
+        data = api.payload  # Update from the json in the body of the request
+        promotion.deserialize(data)
         promotion.id = promotion_id
         promotion.update()
         return promotion.serialize(), status.HTTP_200_OK

@@ -240,6 +240,7 @@ $(function () {
         let ajax = $.ajax({
             type: "PUT",
             url: `/api/promotions/${promotion_id}/activate`,
+
             contentType: "application/json",
             data: '',
         })
@@ -381,6 +382,7 @@ $(function () {
         ajax.fail(function(res){
             flash_message(res.responseJSON.message)
         });
+
     });
 
 })
