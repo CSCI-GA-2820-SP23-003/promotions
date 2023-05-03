@@ -1,4 +1,4 @@
-# NYU DevOps Project Template
+# NYU DevOps Project - Promotion
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
@@ -6,24 +6,16 @@
 [![Build Status](https://github.com/CSCI-GA-2820-SP23-003/promotions/actions/workflows/bdd.yml/badge.svg)](https://github.com/CSCI-GA-2820-SP23-003/promotions/actions)
 [![codecov](https://codecov.io/gh/CSCI-GA-2820-SP23-003/promotions/branch/master/graph/badge.svg?token=KS7TVGHDHQ)](https://codecov.io/gh/CSCI-GA-2820-SP23-003/promotions)
 
-This is a skeleton you can use to start your projects
 
-## Information about this repo
+This service is currently hosted on a Kubernetes Cluster on IBM Cloud.
 
-These are the details about a Promotion
-```
-{
-    "id": 1357256, 
-    "title": promo_sdivx,
-    "promo_code": 33245,
-    "promo_type": BOGO
-    "amount": 60,
-    "start_date": 2013-08-19,
-    "end_date": 2013-08-19,
-    "is_site_wide": False,
-    "product_id": 100
-}
-```
+Development Site : http://159.122.187.73:31001/  
+Production  Site : http://159.122.187.73:31002/
+
+## Project Overview
+
+This repo is the promotion functionality which is part of a demo e-commerce website. It allows for creation of multiple promotion for products. The service supports all CRUD: create, read, update, delete, list and query operations on the main schemas of promotions.
+
 We support 3 types of promotions:
 | Promo Type         | Description
 | ------------------ | -------------------------------
@@ -31,67 +23,38 @@ We support 3 types of promotions:
 | DISCOUNT   | Reduce $amount % from your total.
 | FIXED | Deduct fix amount from your total
 
-These are the RESTful routes for `promotions`
+These are the API endpoints of `promotions`
 
 | Index              | Endpoint
 | ------------------ | -------------------------------
 | Create a Promotion | POST `/promotions` 
-| Read/Get an Promo by ID   | GET `/promotions/<promotion_id>`
 | Update an existing Promo | PUT `/promotions/<promotion_id>`
+| Activate an existing Promo | PUT `/promotions/<promotion_id>/activate`
 | Delete an Promo | DELETE `/promotions/<promotion_id>`
-| List Promos     | GET `/promotions`
+| Deactivate an existing Promo | DELETE `/promotions/<promotion_id>/activate`
+| List all Promos     | GET `/promotions`
+| Read/Get an Promo by ID   | GET `/promotions/<promotion_id>`
 
-The test cases have 95% test coverage and can be run with `nosetests`
 
-## Overview
+## Project Setup
 
-This project template contains starter code for your class project. The `/service` folder contains your `models.py` file for your model and a `routes.py` file for your service. The `/tests` folder has test case starter code for testing the model and the service separately. All you need to do is add your functionality. You can use the [lab-flask-tdd](https://github.com/nyu-devops/lab-flask-tdd) for code examples to copy from.
-
-## Automatic Setup
-
-The best way to use this repo is to start your own repo using it as a git template. To do this just press the green **Use this template** button in GitHub and this will become the source for your repository.
-
-## Manual Setup
-
-You can also clone this repository and then copy and paste the starter code into your project repo folder on your local computer. Be careful not to copy over your own `README.md` file so be selective in what you copy.
-
-There are 4 hidden files that you will need to copy manually if you use the Mac Finder or Windows Explorer to copy files from this folder into your repo folder.
-
-These should be copied using a bash shell as follows:
-
-```bash
-    cp .gitignore  ../<your_repo_folder>/
-    cp .flaskenv ../<your_repo_folder>/
-    cp .gitattributes ../<your_repo_folder>/
+This project use docker container, VScode. To deploy locally, you can clone this repo, change into the repo directory then use "code ." to start the remote container in VScode ( remote connection extension is required)
+```
+$ git clone https://github.com/CSCI-GA-2820-SP23-003/promotions.git
+$ cd promotions
+$ code .
 ```
 
-## Contents
-
-The project contains the following:
-
-```text
-.gitignore          - this will ignore vagrant and other metadata files
-.flaskenv           - Environment variables to configure Flask
-.gitattributes      - File to gix Windows CRLF issues
-.devcontainers/     - Folder with support for VSCode Remote Containers
-dot-env-example     - copy to .env to use environment variables
-requirements.txt    - list if Python libraries required by your code
-config.py           - configuration parameters
-
-service/                   - service python package
-├── __init__.py            - package initializer
-├── models.py              - module with business models
-├── routes.py              - module with service routes
-└── common                 - common code package
-    ├── error_handlers.py  - HTTP error handling code
-    ├── log_handlers.py    - logging setup code
-    └── status.py          - HTTP status constants
-
-tests/              - test cases package
-├── __init__.py     - package initializer
-├── test_models.py  - test suite for business models
-└── test_routes.py  - test suite for service routes
+To start the service, this project uses honcho which gets it's commands from the Procfile. You can use `honcho start` then open the service in your browser via `localhost:8000`
 ```
+$ honcho start
+```
+
+The test cases can be run with `nosetests`
+```
+$ nosettests
+```
+
 
 ## License
 
