@@ -50,9 +50,14 @@ To start the service, this project uses honcho which gets it's commands from the
 $ honcho start
 ```
 
-The test cases can be run with `nosetests`
+The TDD test cases can be run with `nosetests`
 ```
-$ nosettests
+$ nosetests
+```
+
+The BDD test cases can be run with `behave`
+```
+$ behave
 ```
 
 
