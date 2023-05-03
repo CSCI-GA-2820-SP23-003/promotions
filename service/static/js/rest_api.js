@@ -12,14 +12,12 @@ $(function () {
         $("#promotion_amount").val(res.amount);
         var timestamp = res.start_date;
         var date = new Date(timestamp);
-        var formattedDate = date.toISOString().split('T')[0]; // Extract date portion
+        var formattedDate = date.toISOString().split('T')[0];
         $("#promotion_start").val(formattedDate);
-        //$("#promotion_start").val(res.start_date);
         var timestamp = res.end_date;
         var date = new Date(timestamp);
-        var formattedDate = date.toISOString().split('T')[0]; // Extract date portion
-        $("#promotion_end").val(formattedDate); // Set the value of the element with ID "promotion_end" to the extracted date
-        //$("#promotion_end").val(res.end_date);
+        var formattedDate = date.toISOString().split('T')[0];
+        $("#promotion_end").val(formattedDate);
         $("#promotion_is_site_wide").val(res.is_site_wide);
 
         if (res.is_site_wide == true) {

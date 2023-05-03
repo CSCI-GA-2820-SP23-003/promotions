@@ -162,7 +162,11 @@ class PromotionCollection(Resource):
     @api.expect(promotion_args, validate=True)
     @api.marshal_list_with(promotion_model)
     def get(self):
-        """Returns a list of all of the Promotions"""
+        """
+        Returns a list of all of the Promotions
+        This endpoint will return all Promotions unless a query
+        parameter (title or promotion code) is specified
+        """
         app.logger.info("Request for promotion list")
         promotions = []
 
